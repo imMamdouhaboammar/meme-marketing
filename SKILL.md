@@ -146,12 +146,34 @@ bun scripts/meme-craft.ts list
 
 ---
 
+## 💡 Canonical Humor Inspiration Engine
+
+The skill engine integrates the **[Meme Marketing Master Presentation Deck](https://docs.google.com/presentation/d/1Dnxy0wxP8G4k_9LToeDuopg-hcqxcg3jg7gIb4u_K2A/edit?usp=drive_link)** as its foundational source of real-world humor inspiration and comedic tension.
+
+When mining micro-moments and shaping dialogue, the engine draws upon five core archetypal dynamics demonstrated in the master deck:
+
+1. **Commercial Disparity & The Cheap Bundle**:
+   - The contrast between quality work and absurd market undercutters (*"Why didn't the client respond? He's with the company offering 20 reels, a logo, and identity for 2,700 EGP"*).
+2. **Workplace Exploitation vs. LinkedIn Sanctimony**:
+   - The reality of 16-hour workdays for 1,200 EGP versus the CEO's epic LinkedIn essay on loyalty and passion.
+3. **AI Helplessness & Craftsman Irony**:
+   - The panic when AI models go offline and engineers/designers have to do tasks manually like ancient history; or the novice AI designer discovering the Pen Tool.
+4. **Cross-Role Friction**:
+   - The clash of mutually incompatible vocabularies (*"A graphic designer on a date with a short-form content creator"*).
+5. **Authentic Domestic Relatability**:
+   - Unvarnished cultural moments (*"The younger sibling who reveals family secrets to guests to liven up the room"*).
+
+See **`references/deck-patterns.md`** for the full structural breakdown.
+
+---
+
 ## 📚 Knowledge Base & Progressive Disclosure
 
 Load deep guides on demand:
 
 | Reference | Purpose |
 |---|---|
+| **`references/deck-patterns.md`** | **[Canonical Master Deck (Google Slides)](https://docs.google.com/presentation/d/1Dnxy0wxP8G4k_9LToeDuopg-hcqxcg3jg7gIb4u_K2A/edit?usp=drive_link)** & structural humor patterns |
 | **`references/agentic-router.md`** | Dynamic routing rules, DAG coordination, and fallback policies |
 | **`references/humor-mechanics.md`** | The 10 comedic mechanisms and voice calibrations |
 | **`references/format-bank.md`** | Comprehensive catalog of visual forms and layout patterns |

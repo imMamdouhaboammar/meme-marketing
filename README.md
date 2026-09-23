@@ -41,6 +41,7 @@ Most AI-generated memes are agonizingly corporate: generic templates, forced pun
 **Meme Marketing Agent** transforms your AI agent into an elite satirical comedy writer. Operating under the **/omni-skill** dynamic routing architecture, it mines real-world daily friction (like pushing an unreviewed PR at 4:58 PM on a Friday or getting client revisions after midnight), pairs them with proven comedic mechanisms, subjects them to 8 adversarial quality gates, and can even render them into **funny doodle line-art SVG cards** on demand.
 
 ### 🌟 Key Capabilities
+- 💡 **Canonical Humor Inspiration**: Infused with real-world creative agency, startup, and domestic satire from the **[Meme Marketing Master Deck (Google Slides)](https://docs.google.com/presentation/d/1Dnxy0wxP8G4k_9LToeDuopg-hcqxcg3jg7gIb4u_K2A/edit?usp=drive_link)** (pricing disparity irony, 16-hr work vs. LinkedIn virtue signaling, AI vs. Pen Tool).
 - 🎯 **Tactile Receipts**: Grounded in specific error messages, timestamps (`11:47 PM`), tool names (`Docker`, `Figma`, `Excel`), and real team dynamics.
 - 🌍 **Multi-Dialect Mastery**: Native fluency in **English** (Tech/B2B/Dev cynicism), **Egyptian Arabic** (Cinema echoes, witty colloquial irony), **Saudi/Gulf Arabic** (Riyadh tech scene, X feed banter), and **Levantine Arabic**.
 - 🚫 **Zero Cringe Guarantee**: Automated filters eliminate corporate slogans, on-image sales pitches, hashtags, and URLs.
@@ -236,6 +237,7 @@ Every meme generated must pass 8 strict gates:
 │   ├── evals.json            # Benchmark test cases
 │   └── fixtures/             # Valid and invalid JSON test cases
 ├── references/
+│   ├── deck-patterns.md      # Canonical Google Slides deck inspiration & patterns
 │   ├── agentic-router.md     # Dynamic routing & DAG execution spec
 │   ├── bineval-gates.md      # The 8 quality gates & anti-cringe filters
 │   ├── caption-craft.md      # Dialect rules, pacing & mobile cadence

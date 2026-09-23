@@ -69,6 +69,9 @@ export const HUMOR_MECHANICS = [
   { id: 'visual_misdirection', name: 'Visual Misdirection', trigger: 'Caption implies one scene, composition reveals unexpected truth' }
 ];
 
+export const MASTER_DECK_INSPIRATION_URL =
+  'https://docs.google.com/presentation/d/1Dnxy0wxP8G4k_9LToeDuopg-hcqxcg3jg7gIb4u_K2A/edit?usp=drive_link';
+
 // Built-in Formats
 export const FORMATS = [
   'reaction_still', 'original_scene', 'template', 'screenshot', 'staged_chat',
@@ -79,7 +82,7 @@ export const FORMATS = [
 function printBanner(): void {
   console.log(`
 \x1b[33m   ____    ____  ______  __  __  ______    ____ ____      _    _____ _____ \x1b[0m
-\x1b[33m  |  _ \\  / ___||  ____||  \\/  ||  ____|  / ___|  _ \\    / \\  |  ___|_   _|\x1b[0m
+\x1b[33m  |  _ \\  / ___||  ____||  \/  ||  ____|  / ___|  _ \\    / \\  |  ___|_   _|\x1b[0m
 \x1b[31m  | |_) | \\___ \\| |__   | |\\/| || |__    | |   | |_) |  / _ \\ | |_    | |  \x1b[0m
 \x1b[31m  |  _ <   ___) |  __|  | |  | ||  __|   | |___|  _ <  / ___ \\|  _|   | |  \x1b[0m
 \x1b[35m  |_| \\_\\ |____/|______||_|  |_||______|   \\____|_| \\_\\/_/   \\_\\_|     |_|  \x1b[0m
@@ -111,6 +114,9 @@ Options:
   --json                    Output machine-readable JSON
   --help, -h                Show this help guide
 
+Inspiration:
+  Canonical Master Deck: ${MASTER_DECK_INSPIRATION_URL}
+
 Examples:
   # Render a distracted boyfriend doodle meme
   bun scripts/meme-craft.ts render --template distracted \\
@@ -136,6 +142,12 @@ Examples:
 // Command: list
 function handleList(): void {
   printBanner();
+  console.log(`\x1b[1m\x1b[34m=== 💡 Canonical Humor Inspiration Master Deck ===\x1b[0m`);
+  console.log(`  \x1b[36m${MASTER_DECK_INSPIRATION_URL}\x1b[0m`);
+  console.log(`  Pillars: 1. Agency/Client Pricing Disparities  2. LinkedIn Virtue vs Exploitation`);
+  console.log(`           3. AI vs Craftsman Muscle Memory       4. Cross-Role Creative Collisions`);
+  console.log(`           5. Authentic Domestic Nuance\n`);
+
   console.log(`\x1b[1m\x1b[34m=== 🎭 Humor Mechanics ===\x1b[0m`);
   HUMOR_MECHANICS.forEach((m, idx) => {
     console.log(`  ${idx + 1}. \x1b[32m${m.name}\x1b[0m (\x1b[33m${m.id}\x1b[0m): ${m.trigger}`);
