@@ -480,12 +480,28 @@ function handleTune(args: string[]): void {
     }
   }
 
+  if (accepted && accepted === rejected) {
+    console.error('\x1b[31mtune cannot --accept and --reject the same id in one call\x1b[0m');
+    process.exit(1);
+  }
+
+  // A new decision on an id replaces any earlier one, so the profile never holds
+  // contradictory entries; the full trail stays in history.
+  const supersede = (id: string): void => {
+    profile.confirmed = profile.confirmed.filter(entry => entry.id !== id);
+    profile.contextual = profile.contextual.filter(entry => entry.id !== id);
+    profile.tentative = profile.tentative.filter(entry => entry.id !== id);
+    profile.rejected = profile.rejected.filter(entry => entry.id !== id);
+  };
+
   const now = new Date().toISOString();
   if (accepted) {
+    supersede(accepted);
     profile.confirmed.push({ id: accepted, note, recorded_at: now });
     profile.history.push({ id: accepted, note, recorded_at: now, decision: 'accepted' });
   }
   if (rejected) {
+    supersede(rejected);
     profile.rejected.push({ id: rejected, note, recorded_at: now });
     profile.history.push({ id: rejected, note, recorded_at: now, decision: 'rejected' });
   }

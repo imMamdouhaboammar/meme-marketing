@@ -109,8 +109,8 @@ curl -fsSL https://raw.githubusercontent.com/imMamdouhaboammar/meme-marketing/ma
 
 ### 2. Manual Installation by Agent Harness
 
-#### 🟠 Claude Code & Claude Desktop (skill only)
-Prefer the marketplace install above for Claude Code. To add only the skill files to your global or project skills:
+#### 🟠 Claude Code & Claude Desktop (manual copy)
+Prefer the marketplace install above for Claude Code. A manual copy into `~/.claude/skills` loads as a local plugin (`meme-marketing@skills-dir`, with subagents, commands and hooks) on recent Claude Code versions; older versions and Claude Desktop pick up the skill only. Run `claude plugin list` to see which one you got.
 ```bash
 # Option A: Via Skills.sh
 npx skills add imMamdouhaboammar/meme-marketing

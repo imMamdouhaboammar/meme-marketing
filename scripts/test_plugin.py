@@ -167,6 +167,23 @@ class TuneCommandTests(unittest.TestCase):
             code, out = run_hook("load_taste_profile.py", {"cwd": tmp})
             self.assertIn("m1 (deadpan)", out)
 
+    def test_tune_new_decision_supersedes_old_one(self):
+        bun = next((p for p in os.environ.get("PATH", "").split(os.pathsep) if (Path(p) / "bun").exists()), None)
+        if bun is None:
+            self.skipTest("bun not installed")
+        cli = [str(Path(bun) / "bun"), str(ROOT / "bin/cli.js"), "tune"]
+        with tempfile.TemporaryDirectory() as tmp:
+            subprocess.run(cli + ["--reject", "m1", "--note", "too corporate"], cwd=tmp, check=True, capture_output=True, timeout=60)
+            subprocess.run(cli + ["--accept", "m1", "--note", "works after rewrite"], cwd=tmp, check=True, capture_output=True, timeout=60)
+            profile = json.loads((Path(tmp) / ".claude/meme-marketing/taste-profile.json").read_text(encoding="utf-8"))
+            self.assertEqual([e["id"] for e in profile["confirmed"]], ["m1"])
+            self.assertEqual(profile["rejected"], [])
+            self.assertEqual([e["decision"] for e in profile["history"]], ["rejected", "accepted"])
+            code, out = run_hook("load_taste_profile.py", {"cwd": tmp})
+            self.assertNotIn("too corporate", out)
+            clash = subprocess.run(cli + ["--accept", "m2", "--reject", "m2"], cwd=tmp, capture_output=True, timeout=60)
+            self.assertNotEqual(clash.returncode, 0)
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

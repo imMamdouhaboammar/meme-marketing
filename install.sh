@@ -17,8 +17,10 @@ if [ -d "$HOME/.claude" ] || command -v claude >/dev/null 2>&1; then
   rm -rf "$HOME/.claude/skills/${TARGET_NAME}"
   cp -r "$SCRIPT_DIR" "$HOME/.claude/skills/${TARGET_NAME}"
   echo "  ✅ Installed for Claude Code -> $HOME/.claude/skills/${TARGET_NAME}"
-  echo "     Loads as a local plugin (skill + subagents + commands + hooks) on the next session."
-  echo "     For auto-updates use: /plugin marketplace add imMamdouhaboammar/meme-marketing"
+  echo "     Recent Claude Code versions load this folder as a local plugin (meme-marketing@skills-dir):"
+  echo "     skill + subagents + commands + hooks. Older versions load the skill only."
+  echo "     Check with: claude plugin list"
+  echo "     For the full plugin with updates on any version: /plugin marketplace add imMamdouhaboammar/meme-marketing"
 fi
 
 # 2. Antigravity / Gemini CLI
