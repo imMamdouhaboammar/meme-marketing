@@ -28,6 +28,7 @@
   "scripts": {
     "start": "bun bin/cli.js",
     "test": "python3 scripts/test_validate.py && python3 scripts/test_plugin.py",
+    "route": "bun bin/cli.js route",
     "craft": "bun bin/cli.js craft",
     "render": "bun bin/cli.js render",
     "validate": "bun bin/cli.js validate",

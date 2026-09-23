@@ -168,5 +168,23 @@ class TuneCommandTests(unittest.TestCase):
             self.assertIn("m1 (deadpan)", out)
 
 
+class RouteCommandTests(unittest.TestCase):
+    def test_route_generates_valid_dag_json(self):
+        bun = next((p for p in os.environ.get("PATH", "").split(os.pathsep) if (Path(p) / "bun").exists()), None)
+        if bun is None:
+            self.skipTest("bun not installed")
+        result = subprocess.run(
+            [str(Path(bun) / "bun"), str(ROOT / "bin/cli.js"), "route", "Create 3 Egyptian memes for backend devs on LinkedIn", "--json"],
+            cwd=str(ROOT), check=True, capture_output=True, text=True, timeout=60,
+        )
+        data = json.loads(result.stdout)
+        self.assertEqual(data["intent"], "CREATE")
+        self.assertEqual(data["detected"]["dialect"], "egyptian")
+        self.assertEqual(data["detected"]["platform"], "linkedin")
+        self.assertGreaterEqual(len(data["dag"]), 5)
+        self.assertEqual(data["dag"][0]["phase"], "Phase 1")
+        self.assertEqual(data["dag"][1]["agent"], "meme-moment-miner")
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

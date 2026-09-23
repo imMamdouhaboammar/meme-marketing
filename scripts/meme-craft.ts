@@ -98,6 +98,7 @@ Usage:
   meme-craft <command> [options]
 
 Commands:
+  route       Analyze prompt and generate dynamic execution DAG (OmniSkill)
   craft       Generate a structured meme concept or batch
   render      Render a funny doodle line-art meme card (SVG / HTML)
   validate    Validate JSON output contract and run the 8 quality gates
@@ -503,6 +504,254 @@ function handleTune(args: string[]): void {
   console.log(`  confirmed: ${profile.confirmed.length} • tentative: ${profile.tentative.length} • rejected: ${profile.rejected.length}`);
 }
 
+// Command: route (OmniSkill Dynamic Agentic Router)
+interface RouteStep {
+  phase: string;
+  name: string;
+  freedom: 'low' | 'medium' | 'high';
+  agent: string;
+  action: string;
+  references: string[];
+  gates?: string[];
+}
+
+function handleRoute(args: string[]): void {
+  let prompt = '';
+  let host = 'universal';
+  let explain = false;
+  let isJson = false;
+
+  for (let i = 0; i < args.length; i++) {
+    const a = args[i];
+    if (a === '--host' && args[i + 1]) {
+      host = args[++i];
+    } else if (a === '--explain') {
+      explain = true;
+    } else if (a === '--json') {
+      isJson = true;
+    } else if (!a.startsWith('-')) {
+      prompt = prompt ? `${prompt} ${a}` : a;
+    }
+  }
+
+  if (!prompt) {
+    console.error('\x1b[31mError: prompt string is required for route command.\x1b[0m');
+    console.log('Usage: meme-craft route "<prompt>" [--host claude|antigravity|cursor|codex] [--explain]');
+    process.exit(1);
+  }
+
+  const pLower = prompt.toLowerCase();
+
+  // Classify intent
+  let intent = 'CREATE';
+  if (pLower.includes('audit') || pLower.includes('check') || pLower.includes('validate') || pLower.includes('critic') || pLower.includes('bineval')) {
+    intent = 'AUDIT';
+  } else if (pLower.includes('render') || pLower.includes('doodle') || pLower.includes('svg') || pLower.includes('draw')) {
+    intent = 'RENDER';
+  } else if (pLower.includes('localize') || pLower.includes('translate') || pLower.includes('dialect') || pLower.includes('شامي') || pLower.includes('مصري') || pLower.includes('سعودي')) {
+    intent = 'LOCALIZE';
+  } else if (pLower.includes('tune') || pLower.includes('profile') || pLower.includes('feedback') || pLower.includes('taste')) {
+    intent = 'TUNE';
+  } else if (pLower.includes('calendar') || pLower.includes('batch') || pLower.includes('week') || pLower.includes('month') || pLower.includes('أسبوع') || pLower.includes('شهر')) {
+    intent = 'BATCH';
+  }
+
+  // Detect dialect
+  let dialect = 'english';
+  if (/مصر|مصري|قاهرة|egypt|cairo/i.test(prompt)) {
+    dialect = 'egyptian';
+  } else if (/سعودي|رياض|خليج|saudi|riyadh|gulf/i.test(prompt)) {
+    dialect = 'saudi';
+  } else if (/شام|لبنان|سوري|أردن|levant/i.test(prompt)) {
+    dialect = 'levantine';
+  }
+
+  // Detect platform
+  let platform = 'linkedin';
+  if (/twitter|[\s]x[\s]|منصة x/i.test(prompt)) {
+    platform = 'x';
+  } else if (/instagram|انستغرام/i.test(prompt)) {
+    platform = 'instagram';
+  } else if (/slack|سلاك/i.test(prompt)) {
+    platform = 'slack';
+  }
+
+  // Build DAG steps based on intent
+  const dag: RouteStep[] = [];
+
+  if (intent === 'CREATE' || intent === 'BATCH') {
+    dag.push({
+      phase: 'Phase 1',
+      name: 'Brief & Taste Ingestion',
+      freedom: 'medium',
+      agent: 'meme-marketing (root)',
+      action: 'Ingest user brief, target audience, dialect preferences, and load .claude/meme-marketing/taste-profile.json',
+      references: ['references/post-tuning.md', 'references/design-spec.md']
+    });
+    dag.push({
+      phase: 'Phase 2',
+      name: 'Micro-Moment Miner',
+      freedom: 'high',
+      agent: 'meme-moment-miner',
+      action: 'Mine 12 to 20 hyper-specific friction moments, receipts, and emotional pain points from the target subculture',
+      references: ['references/humor-mechanics.md', 'references/deck-patterns.md']
+    });
+    dag.push({
+      phase: 'Phase 3',
+      name: 'Comedy Matrix Engine',
+      freedom: 'medium',
+      agent: 'meme-dialect-localizer',
+      action: `Pair humor mechanism with visual format, apply ${dialect} dialect cadence, and craft image-text tension`,
+      references: ['references/format-bank.md', 'references/caption-craft.md']
+    });
+    dag.push({
+      phase: 'Phase 4',
+      name: 'Multi-Agent Critic & BinEval Gate',
+      freedom: 'low',
+      agent: 'meme-bineval-critic',
+      action: 'Run 8 BinEval quality gates (Send test, receipt check, zero cringe) and validate output JSON contract',
+      references: ['references/bineval-gates.md', 'references/output-contract.md'],
+      gates: ['The Send Test', 'The Receipt Check', 'Image-Text Contract', 'Feed Glance Test', 'Logo-Free Share Test', 'Batch Variety', 'Zero Cringe Guarantee', 'Dialect Integrity']
+    });
+    dag.push({
+      phase: 'Phase 5',
+      name: 'Doodle Renderer & Asset Production',
+      freedom: 'low',
+      agent: 'meme-doodle-renderer',
+      action: 'Render vector SVG doodle meme card using assets/templates/ or export complete designer brief',
+      references: ['references/design-spec.md']
+    });
+  } else if (intent === 'AUDIT') {
+    dag.push({
+      phase: 'Phase 1',
+      name: 'Contract Ingestion',
+      freedom: 'low',
+      agent: 'meme-bineval-critic',
+      action: 'Validate JSON output format with scripts/validate.py',
+      references: ['references/output-contract.md']
+    });
+    dag.push({
+      phase: 'Phase 2',
+      name: 'BinEval Adversarial Critique',
+      freedom: 'low',
+      agent: 'meme-bineval-critic',
+      action: 'Score candidate against the 8 strict BinEval quality gates and emit pass/fail evidence',
+      references: ['references/bineval-gates.md'],
+      gates: ['The Send Test', 'The Receipt Check', 'Image-Text Contract', 'Feed Glance Test', 'Logo-Free Share Test', 'Batch Variety', 'Zero Cringe Guarantee', 'Dialect Integrity']
+    });
+    dag.push({
+      phase: 'Phase 3',
+      name: 'Remediation Protocol',
+      freedom: 'medium',
+      agent: 'meme-moment-miner',
+      action: 'Provide exact targeted replacements for failed gates (e.g. inject tactile timestamp receipts)',
+      references: ['references/humor-mechanics.md']
+    });
+  } else if (intent === 'RENDER') {
+    dag.push({
+      phase: 'Phase 1',
+      name: 'Template Matching',
+      freedom: 'low',
+      agent: 'meme-doodle-renderer',
+      action: 'Match comedic structure to vector template (distracted, two-buttons, this-is-fine, drake)',
+      references: ['references/format-bank.md', 'references/design-spec.md']
+    });
+    dag.push({
+      phase: 'Phase 2',
+      name: 'Vector SVG Compilation',
+      freedom: 'low',
+      agent: 'meme-doodle-renderer',
+      action: 'Render scalable SVG doodle line-art with hand-drawn organic ink displacement filters',
+      references: ['references/design-spec.md']
+    });
+  } else if (intent === 'LOCALIZE') {
+    dag.push({
+      phase: 'Phase 1',
+      name: 'Cultural Deconstruction',
+      freedom: 'medium',
+      agent: 'meme-dialect-localizer',
+      action: `Deconstruct premise and replace generic humor with native ${dialect} cultural idioms and cinema echoes`,
+      references: ['references/caption-craft.md']
+    });
+    dag.push({
+      phase: 'Phase 2',
+      name: 'Dialect Integrity Gate',
+      freedom: 'low',
+      agent: 'meme-bineval-critic',
+      action: 'Verify cadence, eliminate unnatural MSA or western slang transliterations',
+      references: ['references/bineval-gates.md']
+    });
+  } else if (intent === 'TUNE') {
+    dag.push({
+      phase: 'Phase 1',
+      name: 'Taste Profile Mutation',
+      freedom: 'low',
+      agent: 'meme-marketing (root)',
+      action: 'Record confirmed or rejected meme IDs and notes to .claude/meme-marketing/taste-profile.json',
+      references: ['references/post-tuning.md']
+    });
+  }
+
+  const result = {
+    engine: 'OmniSkill Dynamic Agentic Router v3.1',
+    intent,
+    host,
+    detected: {
+      dialect,
+      platform,
+      prompt
+    },
+    dag
+  };
+
+  if (isJson) {
+    console.log(JSON.stringify(result, null, 2));
+    return;
+  }
+
+  printBanner();
+  console.log(`\x1b[1m\x1b[34m=== ⚡ Dynamic Agentic Routing Plan ===\x1b[0m`);
+  console.log(`  \x1b[1mInput Intent:\x1b[0m      \x1b[32m${intent}\x1b[0m`);
+  console.log(`  \x1b[1mTarget Host:\x1b[0m       \x1b[33m${host}\x1b[0m`);
+  console.log(`  \x1b[1mDetected Dialect:\x1b[0m  \x1b[36m${dialect}\x1b[0m`);
+  console.log(`  \x1b[1mTarget Platform:\x1b[0m   \x1b[35m${platform}\x1b[0m`);
+  console.log(`  \x1b[1mQuery:\x1b[0m             "${prompt}"\n`);
+
+  console.log(`\x1b[1m\x1b[34m=== 📋 Execution DAG (${dag.length} Steps) ===\x1b[0m`);
+  dag.forEach((step, idx) => {
+    const freedomColor = step.freedom === 'low' ? '\x1b[31m[low]\x1b[0m' : step.freedom === 'medium' ? '\x1b[33m[medium]\x1b[0m' : '\x1b[32m[high]\x1b[0m';
+    console.log(`  \x1b[1m${idx + 1}. ${step.phase}: ${step.name}\x1b[0m ${freedomColor}`);
+    console.log(`     \x1b[90mAgent:\x1b[0m      ${step.agent}`);
+    console.log(`     \x1b[90mAction:\x1b[0m     ${step.action}`);
+    console.log(`     \x1b[90mReferences:\x1b[0m ${step.references.join(', ')}`);
+    if (step.gates && step.gates.length > 0) {
+      console.log(`     \x1b[90mGates:\x1b[0m      \x1b[32m${step.gates.length} Gates Active\x1b[0m (${step.gates.slice(0, 3).join(', ')}...)`);
+    }
+  });
+
+  if (explain) {
+    console.log(`\n\x1b[1m\x1b[34m=== 🗺️ Visual Execution Graph ===\x1b[0m`);
+    console.log(`
+  [User Intent: "${prompt.slice(0, 35)}..."]
+          │
+          ▼
+   [OmniSkill Router] ──(Intent: ${intent})──► [${dag[0].agent}]
+                                                    │
+                                                    ▼
+                                           [${dag[1]?.agent || 'Done'}]
+                                                    │
+                                                    ▼
+                                           [${dag[2]?.agent || 'Done'}]
+                                                    │
+                                                    ▼
+                                           [${dag[3]?.agent || 'Done'}]
+                                                    │
+                                                    ▼
+                                      [Validated Output Asset]
+`);
+  }
+}
+
 // Main router
 async function main(): Promise<void> {
   const args = process.argv.slice(2);
@@ -515,6 +764,8 @@ async function main(): Promise<void> {
 
   if (cmd === 'list') {
     handleList();
+  } else if (cmd === 'route') {
+    handleRoute(args.slice(1));
   } else if (cmd === 'render') {
     handleRender(args.slice(1));
   } else if (cmd === 'validate') {
