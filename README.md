@@ -265,6 +265,7 @@ meme-craft <command> [options]
 
 | Command | Options | Description |
 |---|---|---|
+| `route` | `"<prompt>"`, `--host <agent>`, `--explain`, `--json` | Analyze prompt and synthesize dynamic execution DAG (OmniSkill) |
 | `craft` | `--topic`, `--audience`, `--dialect`, `--platform`, `--json` | Synthesize complete meme specs or machine-readable JSON |
 | `render` | `--template`, `--caption`, `--new`, `--user`, `--current`, `--out` | Render vector doodle line-art meme card (`.svg`) |
 | `validate` | `<path-to-json>` | Validate batch JSON against output contract and cringe filters |

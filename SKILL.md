@@ -38,6 +38,11 @@ flowchart TD
     ExecutionDAG --> J["Publishable Relatable Meme (Text + SVG + JSON)"]
 ```
 
+```bash
+# Analyze prompt and synthesize dynamic execution DAG
+meme-craft route "<user request>" [--host claude|antigravity|cursor|codex] [--explain]
+```
+
 ### Route Selection
 
 | Mode | Trigger Phrase / Intent | Primary Deliverable |
