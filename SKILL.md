@@ -8,7 +8,7 @@ description: >
   Generates publishable captions, designer briefs, instant SVG doodle meme cards,
   and validated output contracts with zero corporate cringe.
 metadata:
-  version: "3.0.0"
+  version: "3.1.0"
   engine: "omni-skill-agentic-v3"
   runtimes: ["bun", "node", "python3"]
   hosts: ["claude-code", "gemini-cli", "antigravity", "cursor", "codex", "opencode"]
@@ -54,10 +54,28 @@ flowchart TD
 | **CREATE** | "make a meme about X", "craft 3 funny posts for our B2B SaaS" | 3-5 distinct concepts + publishable captions + visual briefs + SVG render |
 | **AUDIT** | "review this meme", "why didn't this post land?", "is this cringe?" | Cringe analysis + Send Test evaluation + 1-pass punchline repair |
 | **LOCALIZE** | "translate this meme to Egyptian/Saudi", "adapt for Gulf audience" | Cultural reconstruction using native idioms, movie receipts & feed habits |
-| **TUNE** | "our audience prefers deadpan", "update taste profile with this feedback" | Updated `assets/taste-profile.json` with accepted/rejected invariants |
+| **TUNE** | "our audience prefers deadpan", "update taste profile with this feedback" | Updated project profile `.claude/meme-marketing/taste-profile.json` (template: `assets/taste-profile.json`) via `meme-craft tune` |
 | **BATCH** | "build a 2-week meme calendar", "diverse meme mix for launch" | Content matrix balancing brand roles (none, prop, character, product) |
 | **RENDER** | "render this meme into an image/SVG", "draw a doodle meme" | Instant vector SVG file via `assets/templates/` or `meme-craft render` |
 
+
+### Specialist Subagents (Claude Code plugin)
+
+When this skill runs as the `meme-marketing` Claude Code plugin, four subagents ship with it. Delegate to them and always pass this skill's root directory path in the delegation prompt so they can read `references/` and run `scripts/`.
+
+| Subagent | Phase / Route | Hand it | It returns |
+|---|---|---|---|
+| `meme-moment-miner` | Phase 2, CREATE, BATCH | audience, market or dialect, platform, product context | 12 to 20 moments with receipts, top 5 ranked with Send Test targets |
+| `meme-bineval-critic` | Phase 4, AUDIT | concepts or a batch JSON path | validator output, 8-gate table, one repair per failure |
+| `meme-dialect-localizer` | LOCALIZE | source meme and target dialect(s) | native moment, swapped receipts, caption and on-image text |
+| `meme-doodle-renderer` | Phase 5, RENDER | approved copy and template | SVG path in the user's folder, or a designer brief |
+
+In hosts without subagents, run the same steps inline. Slash commands `/meme`, `/meme-audit`, `/meme-localize`, `/meme-render` and `/meme-calendar` map to the routes above.
+
+### Plugin Hooks
+
+- **PostToolUse (Write/Edit)**: any saved JSON whose root has `"skill": "meme-marketing"` is checked with `scripts/validate.py`. A failing batch is blocked with the exact failures; fix them and save again. Other files are ignored.
+- **SessionStart**: if the project has `.claude/meme-marketing/taste-profile.json` with recorded decisions, a short summary is loaded as context. Apply it only when writing memes. Record decisions with `meme-craft tune --accept <id> | --reject <id> | --note "<reason>"`.
 ---
 
 ## 🚀 The 6-Phase Execution DAG
@@ -142,6 +160,9 @@ bun scripts/meme-craft.ts craft --topic "Kubernetes Pod Crash" --audience "SREs"
 
 # 5. List all mechanisms, templates, and formats
 bun scripts/meme-craft.ts list
+
+# 6. Record user feedback in the project taste profile (.claude/meme-marketing/taste-profile.json)
+bun scripts/meme-craft.ts tune --accept meme-2 --note "deadpan lands with this audience"
 ```
 
 ---

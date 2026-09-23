@@ -13,6 +13,9 @@
 [![Bun](https://img.shields.io/badge/Runtime-Bun%20%3E%3D1.0-FBF0DF?style=flat-square&logo=bun&logoColor=black)](https://bun.sh)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-Certified%20Skill-D97706?style=flat-square&logo=anthropic&logoColor=white)](https://claude.ai)
+[![Claude Marketplace](https://img.shields.io/badge/Claude%20Marketplace-Plugin-D97706?style=flat-square&logo=anthropic&logoColor=white)](#-claude-code-plugin-marketplace-agents--hooks)
+[![Claude Agents](https://img.shields.io/badge/Subagents-4-D97706?style=flat-square&logo=anthropic&logoColor=white)](agents)
+[![Claude Hooks](https://img.shields.io/badge/Hooks-PostToolUse%20%2B%20SessionStart-D97706?style=flat-square&logo=anthropic&logoColor=white)](hooks/hooks.json)
 [![Antigravity](https://img.shields.io/badge/Antigravity%20%2F%20Gemini-Compatible-4285F4?style=flat-square&logo=google&logoColor=white)](https://deepmind.google)
 [![Cursor](https://img.shields.io/badge/Cursor%20%2F%20Windsurf-Ready-000000?style=flat-square&logo=cursor&logoColor=white)](https://cursor.com)
 [![Codex](https://img.shields.io/badge/Codex%20%2F%20ChatGPT-Supported-10A37F?style=flat-square&logo=openai&logoColor=white)](https://chatgpt.com)
@@ -23,6 +26,7 @@
 <p align="center">
   <a href="#-features">Features</a> •
   <a href="#-installation-guide">Install Guide</a> •
+  <a href="#-claude-code-plugin-marketplace-agents--hooks">Claude Plugin</a> •
   <a href="#-quickstart">Quickstart</a> •
   <a href="#-architecture">Architecture</a> •
   <a href="#-cli-reference">CLI Reference</a> •
@@ -46,7 +50,8 @@ Most AI-generated memes are agonizingly corporate: generic templates, forced pun
 - 🌍 **Multi-Dialect Mastery**: Native fluency in **English** (Tech/B2B/Dev cynicism), **Egyptian Arabic** (Cinema echoes, witty colloquial irony), **Saudi/Gulf Arabic** (Riyadh tech scene, X feed banter), and **Levantine Arabic**.
 - 🚫 **Zero Cringe Guarantee**: Automated filters eliminate corporate slogans, on-image sales pitches, hashtags, and URLs.
 - 🎨 **Built-in Doodle Renderer**: Generate standalone, scalable SVG doodle meme cards directly from terminal or prompt.
-- 🔄 **Continuous Taste Profiling**: Learns what your brand and audience love or hate across sessions via `assets/taste-profile.json`.
+- 🔄 **Continuous Taste Profiling**: `meme-craft tune` records what your brand and audience accept or reject in `.claude/meme-marketing/taste-profile.json`, and a SessionStart hook loads it into every new Claude Code session.
+- 🧩 **Claude Code Plugin**: Install from the Claude marketplace and get the skill, 4 specialist subagents, 5 slash commands and 2 guardrail hooks in one step.
 
 ---
 
@@ -54,7 +59,41 @@ Most AI-generated memes are agonizingly corporate: generic templates, forced pun
 
 Install `meme-marketing` across any AI coding agent or command line environment in seconds.
 
-### 1. One-Line Universal Auto-Installer (Recommended)
+### 0. Claude Code Marketplace (Recommended for Claude Code)
+Inside any Claude Code session:
+
+```text
+/plugin marketplace add imMamdouhaboammar/meme-marketing
+/plugin install meme-marketing@meme-marketing
+```
+
+Then run `/reload-plugins` (or restart Claude Code). This installs the full plugin: skill, subagents, slash commands and hooks. Update later with `/plugin marketplace update meme-marketing`.
+
+From the terminal instead:
+
+```bash
+claude plugin marketplace add imMamdouhaboammar/meme-marketing
+claude plugin install meme-marketing@meme-marketing
+```
+
+For teams, pin it in the project's `.claude/settings.json` so every teammate gets the same plugin when they trust the folder:
+
+```json
+{
+  "extraKnownMarketplaces": {
+    "meme-marketing": {
+      "source": { "source": "github", "repo": "imMamdouhaboammar/meme-marketing" }
+    }
+  },
+  "enabledPlugins": {
+    "meme-marketing@meme-marketing": true
+  }
+}
+```
+
+Try a local checkout without installing: `claude --plugin-dir ./meme-marketing`.
+
+### 1. One-Line Universal Auto-Installer
 Automatically detects all installed agent environments (`Claude Code`, `Google Antigravity`, `Gemini CLI`, `Cursor`, `Codex`, and `Agent Kernel`) and installs the skill:
 
 ```bash
@@ -70,8 +109,8 @@ curl -fsSL https://raw.githubusercontent.com/imMamdouhaboammar/meme-marketing/ma
 
 ### 2. Manual Installation by Agent Harness
 
-#### 🟠 Claude Code & Claude Desktop
-Add to your global or project skills:
+#### 🟠 Claude Code & Claude Desktop (skill only)
+Prefer the marketplace install above for Claude Code. To add only the skill files to your global or project skills:
 ```bash
 # Option A: Via Skills.sh
 npx skills add imMamdouhaboammar/meme-marketing
@@ -136,6 +175,59 @@ Once installed, simply prompt your agent naturally:
 
 ---
 
+## 🧩 Claude Code Plugin: Marketplace, Agents & Hooks
+
+The repository is a Claude Code plugin and its own single-plugin marketplace. Both manifests live in `.claude-plugin/` and pass `claude plugin validate --strict` in CI.
+
+```text
+Skills (1)     meme-marketing
+Commands (5)   /meme  /meme-audit  /meme-localize  /meme-render  /meme-calendar
+Agents (4)     meme-moment-miner  meme-bineval-critic  meme-dialect-localizer  meme-doodle-renderer
+Hooks (2)      PostToolUse (Write|Edit|MultiEdit)  SessionStart
+```
+
+### 🤖 Specialist Subagents
+
+Each subagent runs in its own context window with only the tools it needs, so the main conversation stays focused on the brief.
+
+| Agent | Phase | Tools | What it returns |
+|---|---|---|---|
+| `meme-moment-miner` | Phase 2 · CREATE, BATCH | Read, Grep, Glob, WebSearch, WebFetch | 12 to 20 audience moments with receipts, top 5 ranked with a Send Test target and provenance |
+| `meme-bineval-critic` | Phase 4 · AUDIT | Read, Grep, Glob, Bash | Validator output, an 8-gate pass/fail table and one concrete repair per failure |
+| `meme-dialect-localizer` | LOCALIZE | Read, Grep, Glob | The joke rebuilt for Egyptian, Saudi/Gulf, Levantine or English with native receipts |
+| `meme-doodle-renderer` | Phase 5 · RENDER | Read, Glob, Bash | An SVG doodle card saved in your folder, or a designer brief when no template fits |
+
+Claude delegates to them automatically during the skill's DAG. You can also call one directly: *"Use the meme-bineval-critic agent on memes.json"*.
+
+### ⌨️ Slash Commands
+
+| Command | Route | Example |
+|---|---|---|
+| `/meme` | CREATE | `/meme Friday deploys, senior backend engineers, english, X` |
+| `/meme-audit` | AUDIT | `/meme-audit ./out/launch-batch.json` |
+| `/meme-localize` | LOCALIZE | `/meme-localize the "this is fine" budget meme to saudi` |
+| `/meme-render` | RENDER | `/meme-render two-buttons "Deploy Friday 5PM" vs "Calm weekend", actor DevOps Lead` |
+| `/meme-calendar` | BATCH | `/meme-calendar PrePilot, Egyptian performance marketers, 2 weeks, egyptian, LinkedIn + Facebook` |
+
+If another plugin uses the same name, call it with the namespace, for example `/meme-marketing:meme`.
+
+### 🪝 Hooks
+
+| Event | Trigger | What happens |
+|---|---|---|
+| `PostToolUse` | Claude writes or edits a `.json` file whose root has `"skill": "meme-marketing"` | Runs `scripts/validate.py`. A failing batch is blocked and Claude gets the exact failures to repair. A passing batch gets a one-line confirmation. Every other file is ignored. |
+| `SessionStart` | New, resumed, cleared or compacted session | Reads `.claude/meme-marketing/taste-profile.json` in the project and loads confirmed, tentative and rejected preferences as short context. Prints nothing when the profile is missing or empty. |
+
+Both hooks use only the Python 3 standard library, time out after a few seconds, and fail open: a crash never blocks your session. Record feedback for the SessionStart hook with:
+
+```bash
+bunx meme-marketing tune --accept meme-2 --note "deadpan lands with this audience"
+bunx meme-marketing tune --reject meme-4 --note "drake template feels stale for B2B"
+bunx meme-marketing tune --note "avoid salary jokes"   # saved as tentative until confirmed
+```
+
+---
+
 ## 🏛️ Architecture & Execution Flow
 
 Operating under the canonical `/omni-skill` dynamic routing pattern:
@@ -177,7 +269,7 @@ meme-craft <command> [options]
 | `render` | `--template`, `--caption`, `--new`, `--user`, `--current`, `--out` | Render vector doodle line-art meme card (`.svg`) |
 | `validate` | `<path-to-json>` | Validate batch JSON against output contract and cringe filters |
 | `list` | *none* | Display catalog of humor mechanics, formats, and doodle templates |
-| `tune` | `--accept <id>`, `--reject <id>`, `--note <text>` | Mutate and persist preferences into `taste-profile.json` |
+| `tune` | `--accept <id>`, `--reject <id>`, `--note <text>`, `--profile <path>` | Record feedback in `.claude/meme-marketing/taste-profile.json` (a bare `--note` is saved as tentative) |
 
 ---
 
@@ -222,10 +314,22 @@ Every meme generated must pass 8 strict gates:
 ## 📁 Repository Structure
 
 ```text
+├── .claude-plugin/
+│   ├── plugin.json           # Claude Code plugin manifest
+│   └── marketplace.json      # Claude Code marketplace catalog
+├── agents/                   # Claude Code subagents
+│   ├── meme-moment-miner.md
+│   ├── meme-bineval-critic.md
+│   ├── meme-dialect-localizer.md
+│   └── meme-doodle-renderer.md
+├── commands/                 # Slash commands (/meme, /meme-audit, ...)
+├── hooks/
+│   ├── hooks.json            # PostToolUse + SessionStart hook config
+│   └── handlers/             # Python hook handlers (stdlib only)
 ├── assets/
 │   ├── logo.svg              # Funny Doodle Line-Art Vector Logo
 │   ├── logo.png              # High-res visual asset
-│   ├── taste-profile.json    # Continuous memory & feedback store
+│   ├── taste-profile.json    # Empty taste profile template
 │   └── templates/            # Hand-drawn vector meme templates (SVG)
 │       ├── distracted-doodle.svg
 │       ├── two-buttons-doodle.svg
@@ -250,14 +354,14 @@ Every meme generated must pass 8 strict gates:
 ├── scripts/
 │   ├── meme-craft.ts         # Agentic CLI engine & SVG renderer
 │   ├── validate.py           # Python 3 validator
-│   └── test_validate.py      # Automated Python unit test suite
+│   ├── test_validate.py      # Contract validator unit tests
+│   └── test_plugin.py        # Plugin manifests, agents, commands & hooks tests
 ├── .codex-plugin/
 │   └── plugin.json           # OpenAI Codex manifest
 ├── .github/workflows/
 │   └── ci.yml                # GitHub Actions test pipeline
 ├── .skills.json              # Skills.sh registry manifest
 ├── install.sh                # Universal multi-agent installer
-├── marketplace.json          # Claude Marketplace manifest
 ├── package.json              # Bun / npm distribution manifest
 ├── SKILL.md                  # Canonical Agentic Skill contract
 └── README.md                 # High-presence documentation
@@ -270,8 +374,9 @@ Every meme generated must pass 8 strict gates:
 Contributions of new funny doodle templates, humor mechanics, and dialect nuances are welcome! Please run tests before submitting PRs:
 
 ```bash
-bun test
-python3 scripts/test_validate.py
+bun run lint
+bun run test                # contract validator + plugin/hook tests
+bun run validate:plugin     # claude plugin validate --strict on both manifests
 ```
 
 ---
