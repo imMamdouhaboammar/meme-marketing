@@ -1,6 +1,6 @@
 {
   "name": "meme-marketing",
-  "version": "3.0.0",
+  "version": "3.0.2",
   "description": "Fully Agentic Meme Crafting Engine - Generate highly relatable, zero-cringe memes with funny doodle line-art, cultural nuance across English and Arabic dialects, and 8 quality gates.",
   "author": {
     "name": "Mamdouh Aboammar",
@@ -16,13 +16,13 @@
     "chatgpt",
     "agent-skill"
   ],
-  "skills": "./",
+  "skills": "./skills/",
   "interface": {
     "displayName": "Meme Marketing Agent",
     "shortDescription": "Craft relatable memes & cards",
     "longDescription": "Fully Agentic Meme Crafting Engine - Generate highly relatable, zero-cringe memes with funny doodle line-art, cultural nuance across English and Arabic dialects, and 8 quality gates.",
     "developerName": "Mamdouh Aboammar",
-    "category": "Marketing & Content",
+    "category": "Creativity",
     "capabilities": [
       "Read",
       "Write"

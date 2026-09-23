@@ -1,6 +1,6 @@
 {
   "name": "meme-marketing",
-  "version": "3.0.0",
+  "version": "3.0.2",
   "description": "Fully Agentic Meme Crafting Engine & CLI - Create relatable, zero-cringe memes with funny doodle line-art, cultural checks, and quality gates",
   "type": "module",
   "main": "bin/cli.js",
@@ -18,6 +18,8 @@
     "references",
     "assets",
     "evals",
+    "skills",
+    "agents",
     "SKILL.md",
     "marketplace.json",
     "install.sh"

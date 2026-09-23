@@ -2,7 +2,7 @@
   "$schema": "https://json.schemastore.org/claude-plugin-manifest.json",
   "name": "meme-marketing",
   "displayName": "Meme Marketing Agent",
-  "version": "3.0.0",
+  "version": "3.0.2",
   "description": "Fully Agentic Meme Crafting Engine - Create highly relatable, zero-cringe memes with funny doodle line-art, cultural checks, and quality gates",
   "author": {
     "name": "Mamdouh Aboammar",
