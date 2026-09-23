@@ -8,7 +8,7 @@ const __dirname = path.dirname(__filename);
 const scriptPath = path.resolve(__dirname, '..', 'scripts', 'meme-craft.ts');
 
 // Check if bun is available or if we are already in bun
-const isBun = typeof process.versions.bun !== 'undefined';
+const isBun = Boolean(process.versions.bun);
 
 if (isBun) {
   await import(scriptPath);

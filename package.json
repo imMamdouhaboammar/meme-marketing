@@ -27,7 +27,8 @@
     "test": "python3 scripts/test_validate.py",
     "craft": "bun bin/cli.js craft",
     "render": "bun bin/cli.js render",
-    "validate": "bun bin/cli.js validate"
+    "validate": "bun bin/cli.js validate",
+    "lint": "oxlint -c .oxlintrc.json"
   },
   "keywords": [
     "meme",
@@ -48,5 +49,9 @@
   "engines": {
     "bun": ">=1.0.0",
     "node": ">=18.0.0"
+  },
+  "devDependencies": {
+    "@oxlint/plugins": "^1.85.0",
+    "oxlint": "^1.85.0"
   }
 }
