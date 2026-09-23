@@ -15,6 +15,17 @@ This file applies to the Claude-compatible source Skill and the packaged ChatGPT
 
 The Skill itself grants no read, write, shell, image, web, GitHub or MCP permissions. Never invent a connected tool or imply permanent memory.
 
+## Claude Code (plugin)
+
+Installed through the marketplace (`/plugin marketplace add imMamdouhaboammar/meme-marketing`, then `/plugin install meme-marketing@meme-marketing`) the package loads as a plugin with:
+
+- the `meme-marketing` skill (this repository root),
+- 4 subagents in `agents/` for moment mining, BinEval review, dialect localization and doodle rendering,
+- 5 slash commands in `commands/`,
+- 2 hooks in `hooks/hooks.json`: batch JSON validation on write and taste profile loading at session start.
+
+The hooks call `python3`. When Python is missing they fail open and stay silent, so the skill still works and validation falls back to the manual check. Subagents inherit the session model and only the tools listed in their frontmatter. Taste profiles live in the project at `.claude/meme-marketing/taste-profile.json`, because the plugin folder is replaced on every update.
+
 ## ChatGPT
 
 Text-only conversations receive captions, scripts and design directions. If the host offers image generation AND the user asks for actual visuals, use that tool with original or authorized material. Never assert that the plugin includes its own image generator. A user-supplied deck does not authorize publishing, reposting or uploading its images elsewhere.

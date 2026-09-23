@@ -68,7 +68,7 @@ flowchart TD
 - **Input**: User feedback ("this is too cheesy", "our audience likes dry deadpan humor", "don't mention money").
 - **Workflow**:
   1. Classify feedback: Creator voice vs. Audience boundary vs. Brand rule.
-  2. Record invariant in `assets/taste-profile.json` under `confirmed` or `rejected`.
+  2. Record invariant in the project profile `.claude/meme-marketing/taste-profile.json` under `confirmed` or `rejected` (`meme-craft tune --accept <id>` or `--reject <id>`). `assets/taste-profile.json` is the empty template.
   3. Re-run concept generation adhering strictly to updated rules.
 
 ### Intent: RENDER

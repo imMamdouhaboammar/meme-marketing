@@ -17,6 +17,8 @@ if [ -d "$HOME/.claude" ] || command -v claude >/dev/null 2>&1; then
   rm -rf "$HOME/.claude/skills/${TARGET_NAME}"
   cp -r "$SCRIPT_DIR" "$HOME/.claude/skills/${TARGET_NAME}"
   echo "  ✅ Installed for Claude Code -> $HOME/.claude/skills/${TARGET_NAME}"
+  echo "     Loads as a local plugin (skill + subagents + commands + hooks) on the next session."
+  echo "     For auto-updates use: /plugin marketplace add imMamdouhaboammar/meme-marketing"
 fi
 
 # 2. Antigravity / Gemini CLI

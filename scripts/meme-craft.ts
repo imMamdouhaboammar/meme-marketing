@@ -112,6 +112,10 @@ Options:
   --template <name>         Doodle template: distracted, two-buttons, this-is-fine, drake
   --out <filepath>          Output file path for rendered asset
   --json                    Output machine-readable JSON
+  --accept <id>             tune: record an approved meme id as a confirmed preference
+  --reject <id>             tune: record a rejected meme id
+  --note <text>             tune: reason in your own words (alone, it is saved as tentative)
+  --profile <filepath>      tune: profile path (default .claude/meme-marketing/taste-profile.json)
   --help, -h                Show this help guide
 
 Inspiration:
@@ -413,6 +417,92 @@ function handleCraft(args: string[]): void {
   }
 }
 
+// Command: tune
+export const DEFAULT_PROFILE_PATH = path.join('.claude', 'meme-marketing', 'taste-profile.json');
+
+interface TasteEntry {
+  id: string;
+  note: string | null;
+  recorded_at: string;
+}
+
+interface TasteProfile {
+  profile_version: string;
+  scope: Record<string, string | null>;
+  confirmed: TasteEntry[];
+  contextual: TasteEntry[];
+  tentative: TasteEntry[];
+  rejected: TasteEntry[];
+  history: Array<TasteEntry & { decision: 'accepted' | 'rejected' | 'note' }>;
+  updated_at: string | null;
+}
+
+function emptyProfile(): TasteProfile {
+  return {
+    profile_version: '1.0',
+    scope: { creator: null, brand: null, audience: null, platform: null, locale: null },
+    confirmed: [],
+    contextual: [],
+    tentative: [],
+    rejected: [],
+    history: [],
+    updated_at: null
+  };
+}
+
+function handleTune(args: string[]): void {
+  let accepted: string | null = null;
+  let rejected: string | null = null;
+  let note: string | null = null;
+  let profilePath = DEFAULT_PROFILE_PATH;
+
+  for (let i = 0; i < args.length; i++) {
+    const arg = args[i];
+    if (arg === '--accept' && args[i + 1]) accepted = args[++i];
+    else if (arg === '--reject' && args[i + 1]) rejected = args[++i];
+    else if (arg === '--note' && args[i + 1]) note = args[++i];
+    else if (arg === '--profile' && args[i + 1]) profilePath = args[++i];
+  }
+
+  if (!accepted && !rejected && !note) {
+    console.error('\x1b[31mtune needs at least one of --accept <id>, --reject <id>, --note <text>\x1b[0m');
+    process.exit(1);
+  }
+
+  const absPath = path.resolve(process.cwd(), profilePath);
+  let profile = emptyProfile();
+  if (fs.existsSync(absPath)) {
+    try {
+      profile = { ...emptyProfile(), ...JSON.parse(fs.readFileSync(absPath, 'utf-8')) };
+    } catch (err: any) {
+      console.error(`\x1b[31mCannot parse taste profile at ${absPath}: ${err.message}\x1b[0m`);
+      process.exit(1);
+    }
+  }
+
+  const now = new Date().toISOString();
+  if (accepted) {
+    profile.confirmed.push({ id: accepted, note, recorded_at: now });
+    profile.history.push({ id: accepted, note, recorded_at: now, decision: 'accepted' });
+  }
+  if (rejected) {
+    profile.rejected.push({ id: rejected, note, recorded_at: now });
+    profile.history.push({ id: rejected, note, recorded_at: now, decision: 'rejected' });
+  }
+  if (note && !accepted && !rejected) {
+    // A bare note stays tentative until the user confirms it (see references/post-tuning.md).
+    const id = `note-${profile.history.length + 1}`;
+    profile.tentative.push({ id, note, recorded_at: now });
+    profile.history.push({ id, note, recorded_at: now, decision: 'note' });
+  }
+  profile.updated_at = now;
+
+  fs.mkdirSync(path.dirname(absPath), { recursive: true });
+  fs.writeFileSync(absPath, `${JSON.stringify(profile, null, 2)}\n`, 'utf-8');
+  console.log(`\x1b[32m✅ Taste profile updated:\x1b[0m ${absPath}`);
+  console.log(`  confirmed: ${profile.confirmed.length} • tentative: ${profile.tentative.length} • rejected: ${profile.rejected.length}`);
+}
+
 // Main router
 async function main(): Promise<void> {
   const args = process.argv.slice(2);
@@ -431,6 +521,8 @@ async function main(): Promise<void> {
     handleValidate(args[1]);
   } else if (cmd === 'craft') {
     handleCraft(args.slice(1));
+  } else if (cmd === 'tune') {
+    handleTune(args.slice(1));
   } else {
     console.error(`\x1b[31mUnknown command: ${cmd}\x1b[0m`);
     printHelp();
