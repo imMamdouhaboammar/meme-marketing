@@ -77,5 +77,5 @@ When adding or tuning regional dialects:
 
 1. Create a feature branch: `git checkout -b feat/my-cool-feature`.
 2. Keep commits concise and descriptive (e.g. `feat: add two-buttons doodle template`, `fix: enforce anti-cringe filter`).
-3. Ensure all tests (`bun run lint`, `python3 scripts/test_validate.py`, `python3 scripts/test_plugin.py`, `bun run validate:plugin`) pass. When you change any manifest version, bump all of them together; `test_plugin.py` fails on drift.
+3. Ensure all tests (`bun run lint`, `python3 scripts/test_validate.py`, `python3 scripts/test_plugin.py`, `bun run validate:plugin`) pass. When you change any manifest version, bump all of them together (including the root `plugin.json` Codex mirror); `test_plugin.py` fails on drift.
 4. Submit a Pull Request targeting `main`.

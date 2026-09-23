@@ -53,6 +53,7 @@ class ManifestTests(unittest.TestCase):
             "package.json": load("package.json")["version"],
             ".skills.json": load(".skills.json")["version"],
             ".codex-plugin": load(".codex-plugin/plugin.json")["version"],
+            "root plugin.json": load("plugin.json")["version"],
         }
         skill = (ROOT / "SKILL.md").read_text(encoding="utf-8")
         versions["SKILL.md"] = re.search(r'version:\s*"([^"]+)"', skill).group(1)
