@@ -1,0 +1,52 @@
+{
+  "name": "meme-marketing",
+  "version": "3.0.0",
+  "description": "Fully Agentic Meme Crafting Engine & CLI - Create relatable, zero-cringe memes with funny doodle line-art, cultural checks, and quality gates",
+  "type": "module",
+  "main": "bin/cli.js",
+  "bin": {
+    "meme-craft": "./bin/cli.js",
+    "meme-marketing": "./bin/cli.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/imMamdouhaboammar/meme-marketing.git"
+  },
+  "files": [
+    "bin",
+    "scripts",
+    "references",
+    "assets",
+    "evals",
+    "SKILL.md",
+    "marketplace.json",
+    "install.sh"
+  ],
+  "scripts": {
+    "start": "bun bin/cli.js",
+    "test": "python3 scripts/test_validate.py",
+    "craft": "bun bin/cli.js craft",
+    "render": "bun bin/cli.js render",
+    "validate": "bun bin/cli.js validate"
+  },
+  "keywords": [
+    "meme",
+    "meme-marketing",
+    "agent-skill",
+    "skills.sh",
+    "claude-code",
+    "gemini-cli",
+    "antigravity",
+    "cursor",
+    "codex",
+    "bun",
+    "typescript",
+    "doodle-art"
+  ],
+  "author": "Mamdouh Aboammar <https://github.com/imMamdouhaboammar>",
+  "license": "MIT",
+  "engines": {
+    "bun": ">=1.0.0",
+    "node": ">=18.0.0"
+  }
+}

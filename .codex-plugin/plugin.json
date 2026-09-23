@@ -1,0 +1,8 @@
+{
+  "name": "meme-marketing",
+  "version": "3.0.0",
+  "description": "Fully Agentic Meme Crafting Engine - Generate relatable, zero-cringe memes with funny doodle line-art, cultural nuance, and quality gates",
+  "entrypoint": "SKILL.md",
+  "capabilities": ["text", "code", "file-writing"],
+  "author": "Mamdouh Aboammar"
+}
