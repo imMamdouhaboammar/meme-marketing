@@ -109,6 +109,15 @@ def main() -> int:
         except (OSError, ValueError) as exc:
             fail(errors, f"cannot parse assets/output-template.json: {exc}")
 
+    security = root / "scripts/security_scan.py"
+    if security.is_file():
+        secure = subprocess.run(
+            [sys.executable, str(security), str(root)],
+            capture_output=True, text=True, timeout=30
+        )
+        if secure.returncode != 0:
+            fail(errors, f"security scan failed: {secure.stdout.strip()} {secure.stderr.strip()}")
+
     validator = root / "scripts/validate.py"
     valid = root / "evals/fixtures/valid.json"
     invalid = root / "evals/fixtures/invalid.json"

@@ -56,6 +56,7 @@ jobs:
       - name: Validate self-contained Agent Skill full pack
         run: |
           python3 skills/meme-marketing/scripts/validate_skill_pack.py skills/meme-marketing
+          python3 skills/meme-marketing/scripts/security_scan.py skills/meme-marketing
           bun skills/meme-marketing/scripts/meme-craft.ts list
           bun skills/meme-marketing/scripts/meme-craft.ts render \
             --template distracted \
