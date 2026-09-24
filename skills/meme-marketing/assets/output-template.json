@@ -1,0 +1,48 @@
+{
+  "skill": "meme-marketing",
+  "memes": [
+    {
+      "audience": {
+        "role": "",
+        "context": "",
+        "market": "",
+        "send_to": ""
+      },
+      "moment": "",
+      "emotion": "",
+      "humor_mechanism": "",
+      "form": "original_scene",
+      "image_text_relation": "dialogue",
+      "caption": "",
+      "on_image_text": "",
+      "visual": {
+        "primary": "",
+        "fallback": "",
+        "source": "original",
+        "description": "",
+        "freshness": {
+          "status": "evergreen",
+          "verified_at": null
+        }
+      },
+      "design": {
+        "ratio": "4:5",
+        "text_position": "",
+        "palette": "",
+        "logo": {
+          "placement": "",
+          "variant": "none"
+        }
+      },
+      "brand_role": "none",
+      "evidence": {
+        "provenance": "illustrative",
+        "receipt": "",
+        "source": null
+      },
+      "alternatives": [],
+      "risk_notes": []
+    }
+  ],
+  "batch_notes": []
+}

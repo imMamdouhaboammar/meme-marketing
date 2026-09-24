@@ -53,6 +53,20 @@ jobs:
           python3 scripts/test_validate.py
           python3 scripts/validate.py evals/fixtures/valid.json
 
+      - name: Validate self-contained Agent Skill full pack
+        run: |
+          python3 skills/meme-marketing/scripts/validate_skill_pack.py skills/meme-marketing
+          python3 skills/meme-marketing/scripts/security_scan.py skills/meme-marketing
+          bun skills/meme-marketing/scripts/meme-craft.ts list
+          bun skills/meme-marketing/scripts/meme-craft.ts render \
+            --template distracted \
+            --new "Agent Skills" \
+            --user "Marketer" \
+            --current "Shallow prompts" \
+            --caption "Full pack smoke test" \
+            --out skill-pack-smoke.svg
+          test -s skill-pack-smoke.svg
+
       - name: Run Claude Plugin Tests (manifests, agents, commands, hooks, tune)
         run: python3 scripts/test_plugin.py
 
