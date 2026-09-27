@@ -12,7 +12,10 @@ FORMS = {"reaction_still", "original_scene", "template", "screenshot",
          "text_led", "video", "visual_only"}
 RELATIONS = {"reaction", "dialogue", "understatement", "literalization",
              "labeling", "contrast", "delayed_reveal", "intentional_echo",
-             "none", "text_free"}
+             "standalone_text", "none", "text_free"}
+CONTENT_TYPES = {"meme", "relatable_post"}
+RELATABLE_FORMS = {"text_led", "screenshot"}
+SHARE_MODES = {"mirror", "arrow", "both"}
 BRAND_ROLES = {"none", "prop", "character", "product_forward"}
 SOURCES = {"original", "licensed", "user_supplied", "unverified_reference"}
 PROVENANCE = {"observed", "brief_supplied", "researched", "illustrative"}
@@ -69,6 +72,23 @@ def check(data):
                 errors.append(f"{p}.image_text_relation: missing image text")
             if image.strip() and relation in ("none", "text_free"):
                 errors.append(f"{p}.image_text_relation: text-free mode includes text")
+        content_type = meme.get("content_type", "meme")
+        if content_type not in CONTENT_TYPES:
+            errors.append(f"{p}.content_type: unknown value")
+        elif content_type == "relatable_post" and meme.get("form") not in RELATABLE_FORMS:
+            errors.append(f"{p}.form: relatable_post needs text_led or screenshot")
+        if relation == "standalone_text" and content_type != "relatable_post" and meme.get("form") != "text_led":
+            errors.append(f"{p}.image_text_relation: standalone_text needs a text_led form or relatable_post")
+        engine = meme.get("engine")
+        if engine is not None:
+            if not isinstance(engine, dict):
+                errors.append(f"{p}.engine: expected object")
+            else:
+                insight = engine.get("insight")
+                if not isinstance(insight, str) or not insight.strip():
+                    errors.append(f"{p}.engine.insight: missing")
+                if engine.get("share_mode") not in SHARE_MODES:
+                    errors.append(f"{p}.engine.share_mode: invalid")
         moment_value = meme.get("moment")
         signature = (moment_value.strip().casefold() if isinstance(moment_value, str) else "", meme.get("humor_mechanism"))
         if signature in signatures:

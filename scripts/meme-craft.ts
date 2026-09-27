@@ -66,8 +66,61 @@ export const HUMOR_MECHANICS = [
   { id: 'false_confidence', name: 'False Confidence', trigger: 'Actor radiating unearned certainty before reality strikes' },
   { id: 'escalation', name: 'Escalation', trigger: 'Minor scope creep escalating panel by panel' },
   { id: 'affectionate_recognition', name: 'Affectionate Recognition', trigger: 'Delight in specific quirky peer habit' },
-  { id: 'visual_misdirection', name: 'Visual Misdirection', trigger: 'Caption implies one scene, composition reveals unexpected truth' }
+  { id: 'visual_misdirection', name: 'Visual Misdirection', trigger: 'Caption implies one scene, composition reveals unexpected truth' },
+  // Deck-derived mechanics (v3.2), see references/humor-mechanics.md
+  { id: 'quote_transplant', name: 'Quote Transplant', trigger: 'Iconic film or series line re-homed in a situation it fits literally' },
+  { id: 'register_hijack', name: 'Register Hijack', trigger: 'Formal, news, HR or proverb voice applied to a trivial daily pain' },
+  { id: 'rule_of_three_break', name: 'Rule-of-Three Break', trigger: 'Two serious list items, then a personal third that derails it' },
+  { id: 'tech_vocab_life', name: 'Tech Vocabulary for Life', trigger: 'sign out, refresh, update or storage full used for a human state' },
+  { id: 'brain_glitch_confession', name: 'Brain Glitch Confession', trigger: 'Admitting a faulty intuition the reader secretly shares' },
+  { id: 'absurd_precision', name: 'Absurd Precision', trigger: 'Emotional truth measured with an oddly exact number' },
+  { id: 'cliche_literalized', name: 'Cliche Literalized', trigger: 'Self-help cliche meets a practical real-world obstacle' },
+  { id: 'mock_authority', name: 'Mock Authority', trigger: 'Tiny social behaviour judged like a principal or a court' },
+  { id: 'time_freeze', name: 'Time Freeze', trigger: 'A parent or relative still treats you as your younger self' },
+  { id: 'cross_market_translation', name: 'Cross-Market Translation', trigger: 'Same concept in three voices or flags, most honest last' },
+  { id: 'proverb_vs_visual', name: 'Proverb vs Visual', trigger: 'Wise saying illustrated literally by the image' },
+  { id: 'inner_monologue_reveal', name: 'Inner Monologue Reveal', trigger: 'Caption shows the polite surface, image line shows the honest thought' }
 ];
+
+// Collision Engine banks (v3.2), see references/humor-engine.md
+export const INSIGHT_LENSES = [
+  'Hidden habit: what they do and would never put in a CV',
+  'Self-lie: what they tell themselves that the calendar disproves',
+  'Brain math glitch: where their intuition fails in a funny way',
+  'Unwritten rule: what everyone follows and nobody wrote down',
+  'Betrayal moment: when a tool, boss or relative flips on them',
+  'Predictable relative: the family member who always makes the same move',
+  'Time freeze: who still treats them like an older version of themselves',
+  'Tiny miracle: the small normal event that feels like a miracle',
+  'Energy budget: where they ration social or emotional energy',
+  'Status gap: where effort and reward visibly disagree'
+];
+
+export const FAR_DOMAINS = [
+  'news bulletin sign-off', 'weather forecast', 'traffic report', 'government office form',
+  'school principal announcement', 'airline cabin announcement', 'court verdict', 'telecom bundle offer',
+  'bank SMS alert', 'pharmacy leaflet dosage', 'customer-service IVR menu', 'terms and conditions',
+  'Egyptian cinema line', 'football commentary', 'wedding invitation', 'proverb or wisdom list',
+  'cooking recipe', 'horoscope', 'exam question', "mother's standard phrases",
+  "father's standard phrases", 'neighbour gossip', 'taxi driver small talk', 'real-estate listing',
+  'software patch notes', 'error message', 'app permission dialog', 'sign-out button',
+  'loading bar', 'storage full warning', 'low battery warning', 'read receipts',
+  'nature documentary narration', 'medical test report', 'fitness tracker summary', 'zoo sign'
+];
+
+export const REGISTERS = [
+  'classical Arabic / formal', 'news anchor', 'self-help coach', 'customer-service polite',
+  "mother's voice", "father's voice", 'HR / corporate', 'football commentator', 'street casual confession'
+];
+
+export const STRUCTURES = [
+  'one-line confession, turn in the last 3 words', 'list of three, third item derails',
+  'announcement with sign-off', 'two-line setup / reaction with a colon', 'question with an obviously wrong belief',
+  'label list over one image', 'three-voice translation card', 'slow vertical stack, one phrase per line',
+  'quoted person, then their inner thought on the image', 'parenthesis reveal at the end'
+];
+
+export const CONTENT_TYPES = ['meme', 'relatable_post'];
 
 export const MASTER_DECK_INSPIRATION_URL =
   'https://docs.google.com/presentation/d/1Dnxy0wxP8G4k_9LToeDuopg-hcqxcg3jg7gIb4u_K2A/edit?usp=drive_link';
@@ -103,6 +156,7 @@ Commands:
   render      Render a funny doodle line-art meme card (SVG / HTML)
   validate    Validate JSON output contract and run the 8 quality gates
   tune        Update local taste profile with feedback
+  spark       Draw seeded Collision Engine prompts (insight lens x far domain x register)
   list        List available humor mechanics, formats, and templates
 
 Options:
@@ -110,7 +164,14 @@ Options:
   --audience <audience>     Target subculture or job role
   --dialect <dialect>       Language/dialect: english, egyptian, saudi, levantine
   --platform <platform>     Target platform: linkedin, x, instagram, facebook
-  --template <name>         Doodle template: distracted, two-buttons, this-is-fine, drake
+  --template <name>         Template: distracted, two-buttons, this-is-fine, drake, text-card
+  --text <text>             text-card: post text; use | for a manual line break
+  --style <name>            text-card: dark, black-gold, orange
+  --name <name>             text-card: the brand's own display name
+  --handle <handle>         text-card: the brand's own handle
+  --count <n>               spark: number of collision prompts (default 5)
+  --seed <n>                spark: reproducible seed
+  --mode <mode>             spark: meme or relatable
   --out <filepath>          Output file path for rendered asset
   --json                    Output machine-readable JSON
   --accept <id>             tune: record an approved meme id as a confirmed preference
@@ -139,6 +200,15 @@ Examples:
     --caption "Decisions that haunt you" \\
     --out dilemma.svg
 
+  # Render a relatable text card from the brand's own page identity
+  bun scripts/meme-craft.ts render --template text-card --style dark \\
+    --name "Your Page" --handle "@yourpage" \\
+    --text "الحاجات اللي مبتخلصش: الدنيا، الدين، وتعديلات الكلاينت ده" \\
+    --out relatable.svg
+
+  # Draw 5 seeded collision prompts for the Collision Engine
+  bun scripts/meme-craft.ts spark --topic "client revisions" --mode relatable --seed 7
+
   # Validate a batch JSON file
   bun scripts/meme-craft.ts validate evals/fixtures/valid.json
 `);
@@ -149,9 +219,14 @@ function handleList(): void {
   printBanner();
   console.log(`\x1b[1m\x1b[34m=== 💡 Canonical Humor Inspiration Master Deck ===\x1b[0m`);
   console.log(`  \x1b[36m${MASTER_DECK_INSPIRATION_URL}\x1b[0m`);
-  console.log(`  Pillars: 1. Agency/Client Pricing Disparities  2. LinkedIn Virtue vs Exploitation`);
+  console.log(`  Pillars: 1. Agency/Client Money                 2. LinkedIn Virtue vs Exploitation`);
   console.log(`           3. AI vs Craftsman Muscle Memory       4. Cross-Role Creative Collisions`);
-  console.log(`           5. Authentic Domestic Nuance\n`);
+  console.log(`           5. Brand Self-Deprecation              6. Egyptian Domestic Life`);
+  console.log(`           7. Visual Puns                         8. Relatable Text Posts\n`);
+
+  console.log(`\x1b[1m\x1b[34m=== 🧠 Collision Engine ===\x1b[0m`);
+  console.log(`  Insight dig -> Far-domain collision -> Mechanism & register -> Sharpen -> Kill the obvious`);
+  console.log(`  Run \x1b[32mspark\x1b[0m for seeded prompts. Content types: ${CONTENT_TYPES.join(', ')}\n`);
 
   console.log(`\x1b[1m\x1b[34m=== 🎭 Humor Mechanics ===\x1b[0m`);
   HUMOR_MECHANICS.forEach((m, idx) => {
@@ -166,6 +241,7 @@ function handleList(): void {
   console.log(`  2. \x1b[32mtwo-buttons\x1b[0m: Sweating dilemma character torn between two choices`);
   console.log(`  3. \x1b[32mthis-is-fine\x1b[0m: Serene doodle dog having coffee while everything burns`);
   console.log(`  4. \x1b[32mdrake\x1b[0m: Disgusted rejection panel vs. approving finger guns panel`);
+  console.log(`  5. \x1b[32mtext-card\x1b[0m: Relatable text post card (styles: dark, black-gold, orange)`);
 
   console.log(`\n\x1b[1m\x1b[34m=== 🌍 Supported Dialects ===\x1b[0m`);
   console.log(`  - \x1b[36menglish\x1b[0m: Tech/B2B/Dev/Marketing culture`);
@@ -209,13 +285,18 @@ function handleRender(args: string[]): void {
     else if (arg === '--approved' && args[i + 1]) approved = args[++i];
   }
 
+  if (template === 'text-card') {
+    handleTextCard(args, outFile);
+    return;
+  }
+
   const scriptDir = path.dirname(new URL(import.meta.url).pathname);
   const repoRoot = path.resolve(scriptDir, '..');
   const templatePath = path.join(repoRoot, 'assets', 'templates', `${template}-doodle.svg`);
 
   if (!fs.existsSync(templatePath)) {
     console.error(`\x1b[31mError: Template '${template}' not found at ${templatePath}\x1b[0m`);
-    console.log(`Available templates: distracted, two-buttons, this-is-fine, drake`);
+    console.log(`Available templates: distracted, two-buttons, this-is-fine, drake, text-card`);
     process.exit(1);
   }
 
@@ -241,6 +322,197 @@ function handleRender(args: string[]): void {
 
   console.log(`\x1b[32m[meme-craft] ✅ Successfully rendered ${template} doodle meme!\x1b[0m`);
   console.log(`  File saved to: \x1b[36m${absOut}\x1b[0m`);
+}
+
+// Relatable text card (v3.2). Uses the brand's own identity: no verified badge, no engagement counts.
+interface CardTheme {
+  id: string;
+  bg: string;
+  card: string;
+  text: string;
+  sub: string;
+  header: boolean;
+}
+
+const TEXT_CARD_STYLES: CardTheme[] = [
+  { id: 'dark', bg: '#0f1419', card: '#16181c', text: '#f5f5f5', sub: '#8b98a5', header: true },
+  { id: 'black-gold', bg: '#000000', card: '#000000', text: '#f4b400', sub: '#8b8b8b', header: false },
+  { id: 'orange', bg: '#f28c28', card: '#f28c28', text: '#5a2a06', sub: '#7a3c0c', header: false }
+];
+
+function findCardTheme(style: string): CardTheme | undefined {
+  return TEXT_CARD_STYLES.find(theme => theme.id === style);
+}
+
+export function wrapCardText(text: string, maxChars: number): string[] {
+  const lines: string[] = [];
+  for (const paragraph of text.split('|')) {
+    const words = paragraph.trim().split(/\s+/).filter(Boolean);
+    let current = '';
+    for (const word of words) {
+      const next = current ? `${current} ${word}` : word;
+      if (next.length > maxChars && current) {
+        lines.push(current);
+        current = word;
+      } else {
+        current = next;
+      }
+    }
+    if (current) lines.push(current);
+  }
+  return lines;
+}
+
+export function buildTextCardSvg(text: string, style: string, name: string, handle: string): string {
+  const theme = findCardTheme(style) ?? TEXT_CARD_STYLES[0];
+  const width = 1080;
+  const height = 1350;
+  const isRtl = /[؀-ۿ]/.test(text);
+  const lines = wrapCardText(text, style === 'black-gold' ? 18 : 24);
+  const fontSize = lines.length <= 4 ? 68 : lines.length <= 7 ? 56 : 46;
+  const lineHeight = Math.round(fontSize * 1.5);
+  const blockHeight = lines.length * lineHeight;
+  const startY = Math.round((height - blockHeight) / 2 + fontSize * 0.8 + (theme.header ? 60 : 0));
+  const direction = isRtl ? 'rtl' : 'ltr';
+  const fontFamily = "Tajawal, Cairo, 'Noto Sans Arabic', 'Segoe UI', Arial, sans-serif";
+
+  const textNodes = lines.map((line, idx) =>
+    `  <text x="${width / 2}" y="${startY + idx * lineHeight}" text-anchor="middle" direction="${direction}" font-family="${fontFamily}" font-size="${fontSize}" font-weight="700" fill="${theme.text}">${escapeXml(line)}</text>`
+  ).join('\n');
+
+  const initial = escapeXml((name.trim()[0] ?? 'M').toUpperCase());
+  const rtlName = /[\u0600-\u06FF]/.test(name);
+  const avatarX = rtlName ? width - 150 : 150;
+  const nameX = rtlName ? width - 220 : 220;
+  const nameAnchor = rtlName ? 'end' : 'start';
+  const header = theme.header
+    ? `  <circle cx="${avatarX}" cy="${startY - 170}" r="48" fill="#f4b400"/>
+  <text x="${avatarX}" y="${startY - 154}" text-anchor="middle" font-family="${fontFamily}" font-size="44" font-weight="700" fill="#16181c">${initial}</text>
+  <text x="${nameX}" y="${startY - 178}" text-anchor="${nameAnchor}" font-family="${fontFamily}" font-size="36" font-weight="700" fill="${theme.text}">${escapeXml(name)}</text>
+  <text x="${nameX}" y="${startY - 134}" text-anchor="${nameAnchor}" font-family="${fontFamily}" font-size="30" fill="${theme.sub}">${escapeXml(handle)}</text>`
+    : '';
+
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" role="img" aria-label="${escapeXml(text.replace(/\|/g, ' '))}">
+  <rect width="${width}" height="${height}" fill="${theme.bg}"/>
+  <rect x="40" y="40" width="${width - 80}" height="${height - 80}" rx="28" fill="${theme.card}"/>
+${header}
+${textNodes}
+</svg>
+`;
+}
+
+function handleTextCard(args: string[], outFile: string): void {
+  let text = '';
+  let style = 'dark';
+  let name = 'Your Page';
+  let handle = '@yourpage';
+  for (let i = 0; i < args.length; i++) {
+    const arg = args[i];
+    if (arg === '--text' && args[i + 1]) text = args[++i];
+    else if (arg === '--style' && args[i + 1]) style = args[++i];
+    else if (arg === '--name' && args[i + 1]) name = args[++i];
+    else if (arg === '--handle' && args[i + 1]) handle = args[++i];
+  }
+  if (!text.trim()) {
+    console.error('\x1b[31mError: text-card needs --text "<post text>"\x1b[0m');
+    process.exit(1);
+  }
+  if (!findCardTheme(style)) {
+    console.error(`\x1b[31mError: unknown style '${style}'. Use: ${TEXT_CARD_STYLES.map(theme => theme.id).join(', ')}\x1b[0m`);
+    process.exit(1);
+  }
+  const absOut = path.resolve(outFile);
+  fs.writeFileSync(absOut, buildTextCardSvg(text, style, name, handle), 'utf8');
+  console.log(`\x1b[32m[meme-craft] ✅ Rendered ${style} relatable text card\x1b[0m`);
+  console.log(`  File saved to: \x1b[36m${absOut}\x1b[0m`);
+}
+
+// Command: spark (seeded Collision Engine prompts)
+export function seededRandom(seed: number): () => number {
+  let state = seed >>> 0;
+  return () => {
+    state = (state + 0x6d2b79f5) >>> 0;
+    let t = state;
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+interface Spark {
+  n: number;
+  lens: string;
+  far_domain: string;
+  register: string;
+  mechanism: string;
+  structure: string;
+  form: string;
+}
+
+const RELATABLE_MECHANISMS = [
+  'register_hijack', 'rule_of_three_break', 'tech_vocab_life', 'brain_glitch_confession', 'absurd_precision',
+  'cliche_literalized', 'mock_authority', 'time_freeze', 'cross_market_translation', 'affectionate_recognition'
+];
+
+export function drawSparks(count: number, seed: number, mode: string): Spark[] {
+  const rand = seededRandom(seed);
+  const pick = (pool: string[], used: Set<string>): string => {
+    const fresh = pool.filter(item => !used.has(item));
+    const source = fresh.length > 0 ? fresh : pool;
+    const choice = source[Math.floor(rand() * source.length)];
+    used.add(choice);
+    return choice;
+  };
+  const usedLens = new Set<string>();
+  const usedDomain = new Set<string>();
+  const usedRegister = new Set<string>();
+  const usedMechanism = new Set<string>();
+  const usedStructure = new Set<string>();
+  const mechanismPool = mode === 'relatable' ? RELATABLE_MECHANISMS : HUMOR_MECHANICS.map(m => m.id);
+  const formPool = mode === 'relatable' ? ['text_led', 'screenshot'] : FORMATS.filter(f => f !== 'video');
+  const sparks: Spark[] = [];
+  for (let n = 1; n <= count; n++) {
+    sparks.push({
+      n,
+      lens: pick(INSIGHT_LENSES, usedLens),
+      far_domain: pick(FAR_DOMAINS, usedDomain),
+      register: pick(REGISTERS, usedRegister),
+      mechanism: pick(mechanismPool, usedMechanism),
+      structure: pick(STRUCTURES, usedStructure),
+      form: formPool[Math.floor(rand() * formPool.length)]
+    });
+  }
+  return sparks;
+}
+
+function handleSpark(args: string[]): void {
+  let topic = '';
+  let count = 5;
+  let seed = Date.now() % 2147483647;
+  let mode = 'meme';
+  let isJson = false;
+  for (let i = 0; i < args.length; i++) {
+    const arg = args[i];
+    if (arg === '--topic' && args[i + 1]) topic = args[++i];
+    else if (arg === '--count' && args[i + 1]) count = Math.max(1, Math.min(20, parseInt(args[++i], 10) || 5));
+    else if (arg === '--seed' && args[i + 1]) seed = parseInt(args[++i], 10) || 1;
+    else if (arg === '--mode' && args[i + 1]) mode = args[++i] === 'relatable' ? 'relatable' : 'meme';
+    else if (arg === '--json') isJson = true;
+  }
+  const sparks = drawSparks(count, seed, mode);
+  if (isJson) {
+    console.log(JSON.stringify({ engine: 'Collision Engine v3.2', topic, mode, seed, sparks }, null, 2));
+    return;
+  }
+  console.log(`\x1b[1m\x1b[34m=== 🧠 Collision Engine sparks (seed ${seed}, mode ${mode}) ===\x1b[0m`);
+  if (topic) console.log(`  Topic: ${topic}`);
+  console.log(`  Use each spark as a forced starting point. Dig one insight with the lens, then express it through the far domain.\n`);
+  sparks.forEach(sp => {
+    console.log(`  \x1b[1m${sp.n}.\x1b[0m \x1b[33mLens:\x1b[0m ${sp.lens}`);
+    console.log(`     \x1b[33mFar domain:\x1b[0m ${sp.far_domain}   \x1b[33mRegister:\x1b[0m ${sp.register}`);
+    console.log(`     \x1b[33mMechanism:\x1b[0m ${sp.mechanism}   \x1b[33mStructure:\x1b[0m ${sp.structure}   \x1b[33mForm:\x1b[0m ${sp.form}`);
+  });
+  console.log(`\n  Discard any spark whose bridge to the insight needs explaining. Keep the ones that feel obvious only after you see them.`);
 }
 
 function escapeXml(unsafe: string): string {
@@ -576,6 +848,11 @@ function handleRoute(args: string[]): void {
     platform = 'slack';
   }
 
+  // Detect content type: relatable text posts ("this is me" posts) vs image memes
+  const contentType = /relatable|tweet card|text post|text card|this is me|بوستات|بوست|تويت|دا انا|ده انا|بيعبر عني|relate/i.test(prompt)
+    ? 'relatable_post'
+    : 'meme';
+
   // Build DAG steps based on intent
   const dag: RouteStep[] = [];
 
@@ -593,23 +870,25 @@ function handleRoute(args: string[]): void {
       name: 'Micro-Moment Miner',
       freedom: 'high',
       agent: 'meme-moment-miner',
-      action: 'Mine 12 to 20 hyper-specific friction moments, receipts, and emotional pain points from the target subculture',
-      references: ['references/humor-mechanics.md', 'references/deck-patterns.md']
+      action: 'Mine 12 to 20 hyper-specific friction moments, receipts, and emotional pain points from the target subculture, then dig one private insight per moment with the Collision Engine lenses',
+      references: ['references/humor-engine.md', 'references/deck-patterns.md']
     });
     dag.push({
       phase: 'Phase 3',
-      name: 'Comedy Matrix Engine',
-      freedom: 'medium',
+      name: 'Collision Engine & Comedy Matrix',
+      freedom: 'high',
       agent: 'meme-dialect-localizer',
-      action: `Pair humor mechanism with visual format, apply ${dialect} dialect cadence, and craft image-text tension`,
-      references: ['references/format-bank.md', 'references/caption-craft.md']
+      action: `Collide each insight with a far domain (run meme-craft spark), pick mechanism and register, apply ${dialect} dialect cadence, craft image-text tension, then kill the obvious first ideas`,
+      references: contentType === 'relatable_post'
+        ? ['references/humor-engine.md', 'references/relatable-posts.md', 'references/caption-craft.md']
+        : ['references/humor-engine.md', 'references/humor-mechanics.md', 'references/format-bank.md', 'references/caption-craft.md']
     });
     dag.push({
       phase: 'Phase 4',
       name: 'Multi-Agent Critic & BinEval Gate',
       freedom: 'low',
       agent: 'meme-bineval-critic',
-      action: 'Run 8 BinEval quality gates (Send test, receipt check, zero cringe) and validate output JSON contract',
+      action: 'Run 8 BinEval quality gates plus creative gates C1-C3 (predictability, insight, share mode) and validate output JSON contract',
       references: ['references/bineval-gates.md', 'references/output-contract.md'],
       gates: ['The Send Test', 'The Receipt Check', 'Image-Text Contract', 'Feed Glance Test', 'Logo-Free Share Test', 'Batch Variety', 'Zero Cringe Guarantee', 'Dialect Integrity']
     });
@@ -693,12 +972,13 @@ function handleRoute(args: string[]): void {
   }
 
   const result = {
-    engine: 'OmniSkill Dynamic Agentic Router v3.1',
+    engine: 'OmniSkill Dynamic Agentic Router v3.2',
     intent,
     host,
     detected: {
       dialect,
       platform,
+      content_type: contentType,
       prompt
     },
     dag
@@ -715,6 +995,7 @@ function handleRoute(args: string[]): void {
   console.log(`  \x1b[1mTarget Host:\x1b[0m       \x1b[33m${host}\x1b[0m`);
   console.log(`  \x1b[1mDetected Dialect:\x1b[0m  \x1b[36m${dialect}\x1b[0m`);
   console.log(`  \x1b[1mTarget Platform:\x1b[0m   \x1b[35m${platform}\x1b[0m`);
+  console.log(`  \x1b[1mContent Type:\x1b[0m      \x1b[36m${contentType}\x1b[0m`);
   console.log(`  \x1b[1mQuery:\x1b[0m             "${prompt}"\n`);
 
   console.log(`\x1b[1m\x1b[34m=== 📋 Execution DAG (${dag.length} Steps) ===\x1b[0m`);
@@ -774,6 +1055,8 @@ async function main(): Promise<void> {
     handleCraft(args.slice(1));
   } else if (cmd === 'tune') {
     handleTune(args.slice(1));
+  } else if (cmd === 'spark') {
+    handleSpark(args.slice(1));
   } else {
     console.error(`\x1b[31mUnknown command: ${cmd}\x1b[0m`);
     printHelp();
