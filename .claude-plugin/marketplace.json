@@ -7,14 +7,14 @@
   },
   "metadata": {
     "description": "Claude Code marketplace for the Meme Marketing agentic meme crafting engine.",
-    "version": "3.2.0"
+    "version": "3.2.1"
   },
   "plugins": [
     {
       "name": "meme-marketing",
       "source": "./",
-      "description": "Craft, audit, localize, tune and render zero-cringe memes grounded in real audience friction. Ships a skill, 4 specialist subagents, 5 slash commands and BinEval validation hooks.",
-      "version": "3.2.0",
+      "description": "Craft, audit, localize, tune and render zero-cringe memes grounded in real audience friction. Includes a Collision Engine for original ideas and relatable \"this is me\" text posts. Ships a skill, 4 specialist subagents, 6 slash commands and BinEval validation hooks.",
+      "version": "3.2.1",
       "author": {
         "name": "Mamdouh Aboammar",
         "url": "https://github.com/imMamdouhaboammar"

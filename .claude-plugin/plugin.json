@@ -1,7 +1,7 @@
 {
   "$schema": "https://anthropic.com/claude-code/plugin.schema.json",
   "name": "meme-marketing",
-  "version": "3.2.0",
+  "version": "3.2.1",
   "description": "Agentic meme crafting engine for Claude Code: audience micro-moments, 22 humor mechanics, a Collision Engine for original ideas, relatable text posts, English and Arabic dialects, 8 BinEval quality gates, doodle SVG rendering, specialist subagents and validation hooks.",
   "author": {
     "name": "Mamdouh Aboammar",
@@ -20,8 +20,5 @@
     "saudi-arabic",
     "svg",
     "content-creation"
-  ],
-  "skills": [
-    "./"
   ]
 }
