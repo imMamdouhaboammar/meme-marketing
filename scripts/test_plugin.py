@@ -59,6 +59,20 @@ class ManifestTests(unittest.TestCase):
         versions["SKILL.md"] = re.search(r'version:\s*"([^"]+)"', skill).group(1)
         self.assertEqual(len(set(versions.values())), 1, versions)
 
+    def test_skill_is_registered_once(self):
+        # skills/ is auto-discovered; also listing "./" loads the root SKILL.md as a second meme-marketing skill.
+        plugin = load(".claude-plugin/plugin.json")
+        declared = plugin.get("skills", [])
+        declared = [declared] if isinstance(declared, str) else declared
+        self.assertNotIn("./", declared)
+        self.assertTrue((ROOT / "skills" / "meme-marketing" / "SKILL.md").is_file())
+
+    def test_marketplace_describes_every_command(self):
+        market = load(".claude-plugin/marketplace.json")
+        entry = next(p for p in market["plugins"] if p["name"] == "meme-marketing")
+        count = len(list((ROOT / "commands").glob("*.md")))
+        self.assertIn(f"{count} slash commands", entry["description"])
+
     def test_marketplace_points_at_repo_root(self):
         market = load(".claude-plugin/marketplace.json")
         self.assertEqual(market["plugins"][0]["source"], "./")

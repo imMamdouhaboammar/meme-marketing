@@ -3,7 +3,7 @@ name: meme-marketing
 description: "Dynamic agentic router and creative meme engine to craft, critique, localize, tune, and render highly relatable social memes and relatable text posts (the \"this is me\" posts people repost and tag) from real audience insights. Runs a Collision Engine that digs a private insight, forces a far-domain association, and kills predictable first ideas. Use when asked to create memes, organic social humor, reaction cards, screenshot memes, tweet-style text cards, relatable posts, Egyptian or Gulf Arabic memes, B2B or tech humor, or content calendars. Generates publishable captions, designer briefs, instant SVG doodle meme cards and text cards, and validated output contracts with zero corporate cringe."
 ---
 
-<!-- version: "3.2.0" -->
+<!-- version: "3.2.1" -->
 
 # 🎭 Meme Marketing: Fully Agentic Meme Crafting Engine
 
