@@ -1,9 +1,9 @@
 ---
 name: meme-marketing
-description: "Dynamic agentic router and creative meme engine to craft, critique, localize, tune, and render highly relatable social memes from audience-specific micro-moments. Use when asked to create memes, organic social humor, reaction cards, screenshot memes, Egyptian or Gulf Arabic memes, B2B or tech humor, or content calendars. Generates publishable captions, designer briefs, instant SVG doodle meme cards, and validated output contracts with zero corporate cringe."
+description: "Dynamic agentic router and creative meme engine to craft, critique, localize, tune, and render highly relatable social memes and relatable text posts (the \"this is me\" posts people repost and tag) from real audience insights. Runs a Collision Engine that digs a private insight, forces a far-domain association, and kills predictable first ideas. Use when asked to create memes, organic social humor, reaction cards, screenshot memes, tweet-style text cards, relatable posts, Egyptian or Gulf Arabic memes, B2B or tech humor, or content calendars. Generates publishable captions, designer briefs, instant SVG doodle meme cards and text cards, and validated output contracts with zero corporate cringe."
 ---
 
-<!-- version: "3.1.1" -->
+<!-- version: "3.2.0" -->
 
 # 🎭 Meme Marketing: Fully Agentic Meme Crafting Engine
 
@@ -11,7 +11,7 @@ Build and distribute high-resonance, zero-cringe memes grounded in real audience
 
 The dynamic execution invariant is:
 
-$$\text{Intent (Any Lang)} \xrightarrow{\text{OmniSkill Router}} \text{Execution DAG} \xrightarrow{\text{Comedy Engine}} \text{BinEval Gate} \xrightarrow{\text{Doodle Renderer}} \text{Publishable Asset}$$
+$$\text{Intent (Any Lang)} \xrightarrow{\text{OmniSkill Router}} \text{Execution DAG} \xrightarrow{\text{Collision Engine}} \text{BinEval Gate} \xrightarrow{\text{Doodle Renderer}} \text{Publishable Asset}$$
 
 ---
 
@@ -35,6 +35,7 @@ Activate this skill when the user asks to create, audit, localize, tune, batch-p
 Maintain an ephemeral task-state object conceptually equivalent to:
 
 - `route`: CREATE | AUDIT | LOCALIZE | TUNE | BATCH | RENDER
+- `content_type`: meme | relatable_post
 - `audience`: one specific person plus context and send-to relationship
 - `locale`: language, dialect, and market
 - `platform`: target feed and ratio assumptions
@@ -66,7 +67,9 @@ Do not claim hidden cross-session memory. Persist preferences only through the e
 |---|---|
 | Route selection, state, tool boundaries, recovery | [runtime-contract.md](references/runtime-contract.md) |
 | Route-specific step sequences and fallback recipes | [workflow-recipes.md](references/workflow-recipes.md) |
+| Creative engine (run on every CREATE/BATCH) | [humor-engine.md](references/humor-engine.md), then `bun scripts/meme-craft.ts spark` |
 | Micro-moments and humor mechanics | [humor-mechanics.md](references/humor-mechanics.md), [deck-patterns.md](references/deck-patterns.md) |
+| Relatable "this is me" text posts | [relatable-posts.md](references/relatable-posts.md) |
 | Visual form selection | [format-bank.md](references/format-bank.md) |
 | Egyptian/Saudi/Levantine/English copy | [caption-craft.md](references/caption-craft.md) |
 | Quality gates and repair logic | [bineval-gates.md](references/bineval-gates.md) |
@@ -101,6 +104,8 @@ A candidate cannot ship until all applicable checks pass:
 8. **Dialect integrity** — requested spoken dialect is natural and not polluted by another dialect.
 9. **Rights/freshness gate** — source and recency are explicit; unknown stays unknown.
 10. **Dignity/sensitivity gate** — humor does not punch down at patients, customers, workers, or protected/vulnerable people.
+11. **Predictability gate**: a typical reader could not guess the turn from the setup (see [humor-engine.md](references/humor-engine.md)).
+12. **Share-mode gate**: the idea is built for a mirror share (repost about self) or an arrow share (send to one person), and you can name which.
 
 For JSON batches, structural validation is mandatory but never substitutes for creative, cultural, legal, or rights review.
 
@@ -129,7 +134,7 @@ flowchart TD
     subgraph ExecutionDAG ["Targeted Meme Execution DAG"]
         D["Phase 1: Discovery & Briefing (Persona, Tone, Platform)"]
         E["Phase 2: Micro-Moment Miner (Real-world friction & receipts)"]
-        F["Phase 3: Comedy Matrix Engine (Mechanic + Format + Image-Text Tension)"]
+        F["Phase 3: Collision Engine (Insight + Far Domain + Mechanic + Register) then Comedy Matrix"]
         G["Phase 4: Multi-Agent Critic & BinEval Gate (Send test, Cringe filter)"]
         H["Phase 5: Visual Production & Doodle Renderer (SVG Card / Diffusion Prompt)"]
         I["Phase 6: Multi-Platform Publishing Copy & Contract Export"]
@@ -144,7 +149,7 @@ flowchart TD
 
 | Mode | Trigger Phrase / Intent | Primary Deliverable |
 |---|---|---|
-| **CREATE** | "make a meme about X", "craft 3 funny posts for our B2B SaaS" | 3-5 distinct concepts + publishable captions + visual briefs + SVG render |
+| **CREATE** | "make a meme about X", "craft 3 funny posts for our B2B SaaS", "اكتبلي بوستات الناس تقول عليها دا انا" | 3-5 distinct concepts (memes or relatable posts) + publishable captions + visual briefs + SVG render |
 | **AUDIT** | "review this meme", "why didn't this post land?", "is this cringe?" | Cringe analysis + Send Test evaluation + 1-pass punchline repair |
 | **LOCALIZE** | "translate this meme to Egyptian/Saudi", "adapt for Gulf audience" | Cultural reconstruction using native idioms, movie receipts & feed habits |
 | **TUNE** | "our audience prefers deadpan", "update taste profile with this feedback" | Updated project profile `.claude/meme-marketing/taste-profile.json` (template: `assets/taste-profile.json`) via `meme-craft tune` |
@@ -163,7 +168,7 @@ When this skill runs as the `meme-marketing` Claude Code plugin, four subagents 
 | `meme-dialect-localizer` | LOCALIZE | source meme and target dialect(s) | native moment, swapped receipts, caption and on-image text |
 | `meme-doodle-renderer` | Phase 5, RENDER | approved copy and template | SVG path in the user's folder, or a designer brief |
 
-In hosts without subagents, run the same steps inline. Slash commands `/meme`, `/meme-audit`, `/meme-localize`, `/meme-render` and `/meme-calendar` map to the routes above.
+In hosts without subagents, run the same steps inline. Slash commands `/meme`, `/meme-relatable`, `/meme-audit`, `/meme-localize`, `/meme-render` and `/meme-calendar` map to the routes above.
 
 ### Plugin Hooks
 
@@ -191,12 +196,20 @@ A meme lands when someone recognizes a hyper-specific situation:
 - Select the top 3-5 moments with the highest forward-to-a-friend impulse.
 - *Mandatory Rule*: Never invent measured client stats or present creative fiction as empirical fact.
 
-### Phase 3: Comedy Matrix Engine
-Combine three independent levers (see `references/humor-mechanics.md` and `references/format-bank.md`):
-1. **Mechanic**: Incongruous reaction, Understatement, Exaggeration, Reversal, Literalization, Role collision, False confidence, Escalation, Affectionate recognition, or Visual misdirection.
-2. **Format**: Reaction still, original doodle scene, staged screenshot, chat mockup, UI mock, object labeling, multi-panel, or visual-only.
-3. **Image-Text Relationship**: Reaction, Dialogue, Understatement, Literalization, Labeling, Contrast, Delayed reveal, Intentional echo, or Text-free.
-- *Rule*: Never let one mechanic dominate a batch. Every variant must differ in comedic mechanism, not just adjectives.
+### Phase 3: Collision Engine + Comedy Matrix
+Before any caption, run the Collision Engine in [humor-engine.md](references/humor-engine.md). It exists because models default to the most probable joke, which the audience has already seen.
+1. **Insight dig**: write one plain-sentence private truth per moment using the ten insight lenses (hidden habit, self-lie, brain glitch, unwritten rule, betrayal, predictable relative, time freeze, tiny miracle, energy budget, status gap).
+2. **Far-domain collision**: list the three obvious domains and discard them; pick a distant frame (news bulletin, telecom offer, patch notes, proverb, cinema line...) and name the bridge. Run `meme-craft spark` for seeded prompts when a shell is available.
+3. **Mechanism + register**: choose one of the 22 mechanisms in [humor-mechanics.md](references/humor-mechanics.md) (classic ten plus twelve deck-derived: quote_transplant, register_hijack, rule_of_three_break, tech_vocab_life, brain_glitch_confession, absurd_precision, cliche_literalized, mock_authority, time_freeze, cross_market_translation, proverb_vs_visual, inner_monologue_reveal) and one register (formal, news anchor, HR, mother, father, commentator...).
+4. **Sharpen**: one lived receipt, turn in the last words, cut to feed length.
+5. **Kill the obvious**: cover the last line; if the audience could guess it, go back to step 2.
+Then pair with a **Format** (reaction still, original scene, staged screenshot, chat mockup, UI mock, object labels, multi-panel, text card, visual-only) and an **Image-Text Relationship** (reaction, dialogue, understatement, literalization, labeling, contrast, delayed reveal, intentional echo, standalone text, text-free).
+- *Rule*: never let one mechanic dominate a batch. Variants must change at least two GTVH knobs (opposition, mechanism, situation, target, narrative strategy, register).
+
+### Content types
+- **meme** (default): image plus caption. Use the reaction-still anatomy from the deck: caption gives the cause, the face gives the emotion, the on-image line (spoken by the character) gives the twist.
+- **relatable_post**: first-person text post that readers repost ("اه دا انا") or send to someone ("دي انتي"). Read [relatable-posts.md](references/relatable-posts.md) for the twelve formulas, the Barnum sweet spot and the mirror/arrow share modes. Render with `meme-craft render --template text-card`.
+- Calendar default mix: 50% image memes, 30% mirror relatable posts, 20% arrow posts.
 
 ### Phase 4: Multi-Agent Critic & BinEval Gate
 Run the 8 immutable quality gates before releasing (see `references/bineval-gates.md`):
@@ -208,6 +221,8 @@ Run the 8 immutable quality gates before releasing (see `references/bineval-gate
 6. **Zero Cringe Guarantee**: No corporate slogans, no hashtags in image, no sales CTAs (`"Click here"`, `"Buy now"`).
 7. **Cultural Nuance**: No robotic Modern Standard Arabic when spoken dialect was requested. No mixed dialects.
 8. **Usability & Fallback**: Every concept provides an original vector or rights-cleared visual fallback.
+
+**Creative gates (after the 8 pass)**: C1 Predictability (audience cannot guess the turn), C2 Insight (a private truth sits underneath), C3 Share mode (mirror or arrow, and to whom). Relatable posts also run the five gates in `references/relatable-posts.md`.
 
 ### Phase 5: Visual Production & Doodle Renderer
 Turn concepts into visual assets:
@@ -256,6 +271,15 @@ bun scripts/meme-craft.ts list
 
 # 6. Record user feedback in the project taste profile (.claude/meme-marketing/taste-profile.json)
 bun scripts/meme-craft.ts tune --accept meme-2 --note "deadpan lands with this audience"
+
+# 7. Draw seeded Collision Engine prompts (breaks the model's default associations)
+bun scripts/meme-craft.ts spark --topic "client revisions" --mode relatable --seed 7
+
+# 8. Render a relatable text card from the brand's own page identity
+bun scripts/meme-craft.ts render --template text-card --style dark \
+  --name "Your Page" --handle "@yourpage" \
+  --text "الحاجات اللي مبتخلصش:|الدنيا، الدين،|وتعديلات الكلاينت ده" \
+  --out relatable.svg
 ```
 
 ---
@@ -264,20 +288,18 @@ bun scripts/meme-craft.ts tune --accept meme-2 --note "deadpan lands with this a
 
 The skill engine integrates the **[Meme Marketing Master Presentation Deck](https://docs.google.com/presentation/d/1Dnxy0wxP8G4k_9LToeDuopg-hcqxcg3jg7gIb4u_K2A/edit?usp=drive_link)** as its foundational source of real-world humor inspiration and comedic tension.
 
-When mining micro-moments and shaping dialogue, the engine draws upon five core archetypal dynamics demonstrated in the master deck:
+The deck holds about 50 image memes and 45 relatable text posts from Egyptian creative, agency and lifestyle pages. The engine draws on eight pillars:
 
-1. **Commercial Disparity & The Cheap Bundle**:
-   - The contrast between quality work and absurd market undercutters (*"Why didn't the client respond? He's with the company offering 20 reels, a logo, and identity for 2,700 EGP"*).
-2. **Workplace Exploitation vs. LinkedIn Sanctimony**:
-   - The reality of 16-hour workdays for 1,200 EGP versus the CEO's epic LinkedIn essay on loyalty and passion.
-3. **AI Helplessness & Craftsman Irony**:
-   - The panic when AI models go offline and engineers/designers have to do tasks manually like ancient history; or the novice AI designer discovering the Pen Tool.
-4. **Cross-Role Friction**:
-   - The clash of mutually incompatible vocabularies (*"A graphic designer on a date with a short-form content creator"*).
-5. **Authentic Domestic Relatability**:
-   - Unvarnished cultural moments (*"The younger sibling who reveals family secrets to guests to liven up the room"*).
+1. **Agency, freelance and client money**: real numbers ("20 ريل ولوجو وايدنتتي بـ 2700 جنيه", "1850 جنيه وعندنا شاي وكانز").
+2. **Workplace exploitation vs LinkedIn sanctimony**: the 16-hour, 1200 EGP job and the manager's "بزعل على الشباب".
+3. **AI tools vs craft muscle memory**: the Pen Tool pride, the AI outage "ايدك بقيت بترعش يا قنصل".
+4. **Cross-role creative friction**: the designer on a date with a content creator, "انا مع الـ Layers".
+5. **Brand self-deprecation**: the course owner is the tired victim of their own course; this is how a product appears.
+6. **Egyptian domestic life**: the secret-spilling little brother, the neighbour with a groom, the brother who actually brought the groceries.
+7. **Visual puns**: "قميص مشجر" beside cut trees, the Illustrator "Ai".
+8. **Relatable text posts**: private habits, brain glitches, register hijacks, family field reports.
 
-See **`references/deck-patterns.md`** for the full structural breakdown.
+See **`references/deck-patterns.md`** for the slide-by-slide breakdown and **`references/relatable-posts.md`** for the text-post formulas.
 
 ---
 
@@ -288,6 +310,8 @@ Load deep guides on demand:
 | Reference | Purpose |
 |---|---|
 | **`references/deck-patterns.md`** | **[Canonical Master Deck (Google Slides)](https://docs.google.com/presentation/d/1Dnxy0wxP8G4k_9LToeDuopg-hcqxcg3jg7gIb4u_K2A/edit?usp=drive_link)** & structural humor patterns |
+| **`references/humor-engine.md`** | Collision Engine: insight lenses, far-domain bank, registers, kill-the-obvious gate, research basis |
+| **`references/relatable-posts.md`** | Relatable "this is me" posts: twelve formulas, share modes, text-card formats, gates |
 | **`references/agentic-router.md`** | Dynamic routing rules, DAG coordination, and fallback policies |
 | **`references/humor-mechanics.md`** | The 10 comedic mechanisms and voice calibrations |
 | **`references/format-bank.md`** | Comprehensive catalog of visual forms and layout patterns |
@@ -308,3 +332,5 @@ Load deep guides on demand:
 - **The Explanatory Crutch**: Writing text on the image to explain why the visual is funny.
 - **Unverified Recency**: Claiming an unproven internet trend is "current" without a dated receipt.
 - **Promotional Graffiti**: Putting URLs, coupon codes, or hashtags inside the meme image.
+- **The First-Idea Trap**: Shipping the joke that came first. It is almost always the one the audience has already seen.
+- **Fake Social Proof**: Rendering text cards with invented like/share counts, a verified badge, or a real person's name and handle.

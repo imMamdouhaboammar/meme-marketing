@@ -44,6 +44,57 @@
         "Same caption with an original paper calendar reaction"
       ],
       "risk_notes": []
+    },
+    {
+      "content_type": "relatable_post",
+      "audience": {
+        "role": "Egyptian freelance designer in her twenties",
+        "context": "scrolling at night after a week of client revisions",
+        "market": "Egypt",
+        "send_to": "her own story, and her designer friend who has the same client"
+      },
+      "moment": "a finished project keeps coming back with small revisions",
+      "emotion": "resigned",
+      "humor_mechanism": "rule_of_three_break",
+      "form": "text_led",
+      "image_text_relation": "standalone_text",
+      "caption": "🙂",
+      "on_image_text": "الحاجات اللي مبتخلصش: الدنيا، الدين، وتعديلات الكلاينت ده",
+      "engine": {
+        "insight": "the project I delivered is never actually finished",
+        "far_domain": "classical wisdom list",
+        "register": "mock proverb",
+        "share_mode": "both"
+      },
+      "visual": {
+        "primary": "Dark text card with the page's own avatar and name, white Arabic text centred",
+        "fallback": "Black background with centred yellow text, one phrase per line",
+        "source": "original",
+        "description": "No engagement counts, no verified badge, small page logo in the corner",
+        "freshness": {
+          "status": "evergreen",
+          "verified_at": null
+        }
+      },
+      "design": {
+        "ratio": "4:5",
+        "text_position": "centre",
+        "palette": "dark navy card, white text",
+        "logo": {
+          "placement": "top left",
+          "variant": "light"
+        }
+      },
+      "brand_role": "none",
+      "evidence": {
+        "provenance": "illustrative",
+        "receipt": "تعديلات الكلاينت ده",
+        "source": null
+      },
+      "alternatives": [
+        "Same line on an orange Facebook text background"
+      ],
+      "risk_notes": []
     }
   ]
 }

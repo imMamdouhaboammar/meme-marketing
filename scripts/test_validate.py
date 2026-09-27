@@ -54,6 +54,31 @@ class MemeValidationTests(unittest.TestCase):
         payload["memes"][0]["visual"]["freshness"] = {"status": "verified_recent", "verified_at": "9999-12-31"}
         self.assertTrue(any("cannot be in the future" in f for f in check(payload)))
 
+    def test_relatable_post_is_accepted(self):
+        relatable = [m for m in self.good["memes"] if m.get("content_type") == "relatable_post"]
+        self.assertTrue(relatable, "valid fixture should include a relatable_post example")
+
+    def test_relatable_post_rejects_image_forms(self):
+        payload = deepcopy(self.good)
+        payload["memes"][0]["content_type"] = "relatable_post"
+        payload["memes"][0]["form"] = "reaction_still"
+        self.assertTrue(any("relatable_post needs" in f for f in check(payload)))
+
+    def test_standalone_text_needs_text_led(self):
+        payload = deepcopy(self.good)
+        payload["memes"][0]["image_text_relation"] = "standalone_text"
+        self.assertTrue(any("standalone_text needs" in f for f in check(payload)))
+
+    def test_engine_share_mode_is_checked(self):
+        payload = deepcopy(self.good)
+        payload["memes"][0]["engine"] = {"insight": "x", "share_mode": "viral"}
+        self.assertTrue(any("share_mode" in f for f in check(payload)))
+
+    def test_unknown_content_type_is_rejected(self):
+        payload = deepcopy(self.good)
+        payload["memes"][0]["content_type"] = "ad"
+        self.assertTrue(any("content_type" in f for f in check(payload)))
+
     def test_eval_corpus_coverage(self):
         corpus = json.loads((ROOT / "evals/evals.json").read_text(encoding="utf-8"))
         self.assertEqual(corpus["skill_name"], "meme-marketing")

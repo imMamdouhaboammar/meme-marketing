@@ -158,6 +158,45 @@
         "Platform conventions reflected in ratio and image dependence",
         "No forced numeric receipts or borrowed Egyptian expressions"
       ]
+    },
+    {
+      "id": 9,
+      "name": "egyptian-relatable-posts",
+      "prompt": "عايز 5 بوستات relatable لصفحة بتكلم الديزاينرز الفريلانسرز في مصر، البوستات اللي الناس تشيرها وتقول اه دا انا أو تعمل منشن لصاحبها. هتنزل على فيسبوك وانستجرام ستوري.",
+      "expected_output": "5 relatable text posts in Egyptian Arabic, each with a stated insight, formula, share mode (mirror or arrow), the post text, a short social caption, a text-card style and render command. No fake engagement numbers or impersonated accounts.",
+      "files": [],
+      "assertions": [
+        "Delivers exactly 5 relatable posts",
+        "Each post states the private insight behind it in one plain sentence",
+        "Each post names a share mode: mirror, arrow or both, and who it is sent to or tagged",
+        "At least 4 different formulas from relatable-posts.md are used across the 5 posts",
+        "Each post has one specific detail (object, number, phrase or tool) and describes a common behaviour",
+        "The turn of each post sits in its last words or a closing parenthesis",
+        "Copy reads as natural spoken Egyptian Arabic with no Gulf markers",
+        "No denial-then-reveal contrast construction anywhere",
+        "No CTA, hashtag or link inside the post text",
+        "Text cards use the page's own identity with no verified badge, invented account or invented like/share counts",
+        "Each post uses content_type relatable_post with a text_led or screenshot form when JSON is requested"
+      ]
+    },
+    {
+      "id": 10,
+      "name": "collision-engine-originality",
+      "prompt": "Make 3 memes for Cairo-based e-commerce store owners who run their own Meta ads. Avoid the usual 'Monday is hard' or 'ads are expensive' jokes. I want ideas people have not seen before.",
+      "expected_output": "3 meme specs, each built from a named insight lens and a far-domain collision with a stated bridge, using at least two deck-derived mechanisms and three different registers or narrative strategies. Obvious first ideas are named and discarded.",
+      "files": [],
+      "assertions": [
+        "Delivers exactly 3 meme specs",
+        "Each concept names its insight in one plain sentence before the caption",
+        "Each concept names a far domain and the bridge linking it to the insight",
+        "The response lists or references obvious first ideas that were discarded",
+        "At least two concepts use deck-derived mechanisms such as register_hijack, quote_transplant, rule_of_three_break or tech_vocab_life",
+        "The three concepts differ in at least two of: mechanism, register, narrative strategy, situation",
+        "None of the concepts relies on 'Monday', generic 'ads are expensive' or other clichés the user excluded",
+        "Each concept passes the predictability gate: the turn is stated and would not be guessed from the setup",
+        "No denial-then-reveal contrast construction anywhere",
+        "Visuals have a workable original or authorized-asset fallback"
+      ]
     }
   ]
 }

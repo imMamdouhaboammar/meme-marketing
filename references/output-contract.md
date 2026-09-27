@@ -21,7 +21,17 @@ Accepted form identifiers:
 reaction_still, original_scene, template, screenshot, staged_chat, ui_mock, object_label, comparison, multi_panel, text_led, video or visual_only
 
 Accepted image-text relationships:
-reaction, dialogue, understatement, literalization, labeling, contrast, delayed_reveal, intentional_echo, none or text_free
+reaction, dialogue, understatement, literalization, labeling, contrast, delayed_reveal, intentional_echo, standalone_text, none or text_free
+
+`standalone_text` is for relatable text posts and tweet-style cards: the on-image text is the whole joke and the social caption is a short separate line (or a single emoji). on_image_text must be non-empty.
+
+Optional (v3.2):
+- content_type: meme (default when omitted) or relatable_post. A relatable_post must use form text_led or screenshot. See [relatable-posts.md](relatable-posts.md).
+- engine: object recording the Collision Engine decisions from [humor-engine.md](humor-engine.md):
+  - insight: the plain-sentence private truth
+  - far_domain: the frame used for the collision (may be "none" for straight observation)
+  - register: the voice of the line
+  - share_mode: mirror, arrow or both
 
 The stdlib validator checks shape, allowed values, text-free consistency, repeated caption, URLs/hashtags/CTAs inside image text, optional real freshness dates and absent visual fallbacks. Its passing result is a structural check only; it cannot know whether a scene is funny or lawful to publish.
 

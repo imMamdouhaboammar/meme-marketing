@@ -45,13 +45,15 @@ Most AI-generated memes are agonizingly corporate: generic templates, forced pun
 **Meme Marketing Agent** transforms your AI agent into an elite satirical comedy writer. Operating under the **/omni-skill** dynamic routing architecture, it mines real-world daily friction (like pushing an unreviewed PR at 4:58 PM on a Friday or getting client revisions after midnight), pairs them with proven comedic mechanisms, subjects them to 8 adversarial quality gates, and can even render them into **funny doodle line-art SVG cards** on demand.
 
 ### 🌟 Key Capabilities
+- 🧠 **Collision Engine (v3.2)**: A five-stage creative procedure that digs a private insight, forces a far-domain association (news bulletin, telecom offer, patch notes, proverb, cinema line), picks a mechanism and a register, and kills the predictable first ideas. `meme-craft spark` injects seeded randomness so the model stops reaching for the same associations. See `references/humor-engine.md`.
+- 🪞 **Relatable "this is me" posts (v3.2)**: A second content type for the first-person text posts people repost ("اه دا انا") or send to a friend. Twelve formulas extracted from the master deck, mirror/arrow share modes, and a `text-card` renderer (dark tweet card, black-gold mood card, orange Facebook background). See `references/relatable-posts.md`.
 - 💡 **Canonical Humor Inspiration**: Infused with real-world creative agency, startup, and domestic satire from the **[Meme Marketing Master Deck (Google Slides)](https://docs.google.com/presentation/d/1Dnxy0wxP8G4k_9LToeDuopg-hcqxcg3jg7gIb4u_K2A/edit?usp=drive_link)** (pricing disparity irony, 16-hr work vs. LinkedIn virtue signaling, AI vs. Pen Tool).
 - 🎯 **Tactile Receipts**: Grounded in specific error messages, timestamps (`11:47 PM`), tool names (`Docker`, `Figma`, `Excel`), and real team dynamics.
 - 🌍 **Multi-Dialect Mastery**: Native fluency in **English** (Tech/B2B/Dev cynicism), **Egyptian Arabic** (Cinema echoes, witty colloquial irony), **Saudi/Gulf Arabic** (Riyadh tech scene, X feed banter), and **Levantine Arabic**.
 - 🚫 **Zero Cringe Guarantee**: Automated filters eliminate corporate slogans, on-image sales pitches, hashtags, and URLs.
 - 🎨 **Built-in Doodle Renderer**: Generate standalone, scalable SVG doodle meme cards directly from terminal or prompt.
 - 🔄 **Continuous Taste Profiling**: `meme-craft tune` records what your brand and audience accept or reject in `.claude/meme-marketing/taste-profile.json`, and a SessionStart hook loads it into every new Claude Code session.
-- 🧩 **Claude Code Plugin**: Install from the Claude marketplace and get the skill, 4 specialist subagents, 5 slash commands and 2 guardrail hooks in one step.
+- 🧩 **Claude Code Plugin**: Install from the Claude marketplace and get the skill, 4 specialist subagents, 6 slash commands and 2 guardrail hooks in one step.
 
 ---
 
@@ -181,7 +183,7 @@ The repository is a Claude Code plugin and its own single-plugin marketplace. Bo
 
 ```text
 Skills (1)     meme-marketing
-Commands (5)   /meme  /meme-audit  /meme-localize  /meme-render  /meme-calendar
+Commands (6)   /meme  /meme-relatable  /meme-audit  /meme-localize  /meme-render  /meme-calendar
 Agents (4)     meme-moment-miner  meme-bineval-critic  meme-dialect-localizer  meme-doodle-renderer
 Hooks (2)      PostToolUse (Write|Edit|MultiEdit)  SessionStart
 ```
@@ -204,6 +206,7 @@ Claude delegates to them automatically during the skill's DAG. You can also call
 | Command | Route | Example |
 |---|---|---|
 | `/meme` | CREATE | `/meme Friday deploys, senior backend engineers, english, X` |
+| `/meme-relatable` | CREATE (relatable_post) | `/meme-relatable freelance designers in Egypt, 5 posts, egyptian, Facebook + IG story` |
 | `/meme-audit` | AUDIT | `/meme-audit ./out/launch-batch.json` |
 | `/meme-localize` | LOCALIZE | `/meme-localize the "this is fine" budget meme to saudi` |
 | `/meme-render` | RENDER | `/meme-render two-buttons "Deploy Friday 5PM" vs "Calm weekend", actor DevOps Lead` |
@@ -268,6 +271,8 @@ meme-craft <command> [options]
 | `route` | `"<prompt>"`, `--host <agent>`, `--explain`, `--json` | Analyze prompt and synthesize dynamic execution DAG (OmniSkill) |
 | `craft` | `--topic`, `--audience`, `--dialect`, `--platform`, `--json` | Synthesize complete meme specs or machine-readable JSON |
 | `render` | `--template`, `--caption`, `--new`, `--user`, `--current`, `--out` | Render vector doodle line-art meme card (`.svg`) |
+| `render --template text-card` | `--text` (use `\|` for line breaks), `--style dark\|black-gold\|orange`, `--name`, `--handle`, `--out` | Render a relatable text post card from the page's own identity |
+| `spark` | `--topic`, `--count`, `--seed`, `--mode meme\|relatable`, `--json` | Draw seeded Collision Engine prompts: insight lens x far domain x register x mechanism x structure |
 | `validate` | `<path-to-json>` | Validate batch JSON against output contract and cringe filters |
 | `list` | *none* | Display catalog of humor mechanics, formats, and doodle templates |
 | `tune` | `--accept <id>`, `--reject <id>`, `--note <text>`, `--profile <path>` | Record feedback in `.claude/meme-marketing/taste-profile.json` (a bare `--note` is saved as tentative) |
@@ -276,7 +281,7 @@ meme-craft <command> [options]
 
 ## 🎨 Built-in Doodle Line-Art Templates
 
-The engine includes 4 pre-drawn, funny doodle vector templates ready for instant rendering:
+The engine includes 4 pre-drawn, funny doodle vector templates ready for instant rendering, plus a programmatic `text-card` renderer for relatable posts:
 
 | Template Name | Identifier | Best For |
 |---|---|---|
@@ -284,6 +289,7 @@ The engine includes 4 pre-drawn, funny doodle vector templates ready for instant
 | **Two Buttons Dilemma** | `two-buttons` | Agonizing between two equally stressful or tempting options |
 | **This is Fine** | `this-is-fine` | Unfazed calm while servers, budgets, or deadlines burn down |
 | **Doodle Approve / Reject** | `drake` | Disapproving legacy slow workflows vs approving modern agentic workflows |
+| **Relatable Text Card** | `text-card` | First-person "this is me" posts in dark, black-gold or orange styles (RTL aware) |
 
 ### CLI Rendering Example:
 ```bash
@@ -344,12 +350,14 @@ Every meme generated must pass 8 strict gates:
 ├── references/
 │   ├── deck-patterns.md      # Canonical Google Slides deck inspiration & patterns
 │   ├── agentic-router.md     # Dynamic routing & DAG execution spec
-│   ├── bineval-gates.md      # The 8 quality gates & anti-cringe filters
+│   ├── bineval-gates.md      # The 8 quality gates, creative gates C1-C3 & anti-cringe filters
 │   ├── caption-craft.md      # Dialect rules, pacing & mobile cadence
 │   ├── design-spec.md        # Typography, contrast & safe areas
 │   ├── format-bank.md        # Taxonomy of visual formats
 │   ├── host-compatibility.md # Per-agent capability profiles
-│   ├── humor-mechanics.md    # 10 comedic mechanics & voices
+│   ├── humor-engine.md       # Collision Engine: insight lenses, far domains, originality gate
+│   ├── humor-mechanics.md    # 22 comedic mechanics (10 classic + 12 deck-derived) & voices
+│   ├── relatable-posts.md    # Relatable "this is me" text posts: formulas, share modes, cards
 │   ├── output-contract.md    # JSON schema specification
 │   └── post-tuning.md        # Continuous taste learning guide
 ├── scripts/
